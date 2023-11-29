@@ -15,13 +15,13 @@ ThisBuild / scalaVersion := Scala3
 ThisBuild / testFrameworks += new TestFramework("weaver.framework.CatsEffect")
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
-ThisBuild / githubWorkflowOSes := Seq("ubuntu-latest")
-ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.graalvm("17"))
+ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
 
-ThisBuild / tlFatalWarnings := true
+ThisBuild / tlFatalWarnings   := true
 ThisBuild / tlCiScalafmtCheck := true
 
-lazy val root = tlCrossRootProject.aggregate(core)
+lazy val root = project.in(file(".")).aggregate(core, app)
 
 lazy val core = project
   .in(file("core"))
@@ -30,3 +30,13 @@ lazy val core = project
     description := "Core data types and operations",
     libraryDependencies ++= Seq(Weaver, WeaverScalacheck)
   )
+
+lazy val app = project
+  .in(file("app"))
+  .settings(
+    name        := "app",
+    description := "Application classes",
+    libraryDependencies ++= Seq(Smithy4sHttp4s, Smithy4sHttp4sSwagger, Http4sServer, Logback, SmithyModel, Alloy)
+  )
+  .enablePlugins(Smithy4sCodegenPlugin)
+  .dependsOn(core)
