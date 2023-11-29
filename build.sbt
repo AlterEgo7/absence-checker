@@ -14,6 +14,13 @@ ThisBuild / scalaVersion := Scala3
 
 ThisBuild / testFrameworks += new TestFramework("weaver.framework.CatsEffect")
 
+ThisBuild / githubWorkflowPublishTargetBranches := Seq()
+ThisBuild / githubWorkflowOSes := Seq("ubuntu-latest")
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.graalvm("17"))
+
+ThisBuild / tlFatalWarnings := true
+ThisBuild / tlCiScalafmtCheck := true
+
 lazy val root = tlCrossRootProject.aggregate(core)
 
 lazy val core = project
