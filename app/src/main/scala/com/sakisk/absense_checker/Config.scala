@@ -16,22 +16,20 @@
 
 package com.sakisk.absense_checker
 
-import cats.effect.{ExitCode, IO, IOApp}
 import cats.syntax.all.*
-import com.sakisk.absense_checker.http.Routes
-import org.http4s.ember.server.EmberServerBuilder
-import org.http4s.syntax.all.*
+import ciris.*
+import ciris.http4s.*
+import com.comcast.ip4s.*
 
-object Main extends IOApp:
-  override def run(args: List[String]): IO[ExitCode] =
-    config[IO].load.flatMap: config =>
-      Routes[IO].routes
-        .flatMap: routes =>
-          EmberServerBuilder
-            .default[IO]
-            .withPort(config.httpServerConfig.port)
-            .withHost(config.httpServerConfig.host)
-            .withHttpApp((routes <+> Routes[IO].docRoutes).orNotFound)
-            .build
-        .useForever
-        .as(ExitCode.Success)
+final case class Config(httpServerConfig: HttpServerConfig)
+final case class HttpServerConfig(host: Host, port: Port)
+
+def httpServerConfig[F[_]]: ConfigValue[F, HttpServerConfig] =
+  (
+    env("SERVER_HOST").as[Host].default(host"0.0.0.0"),
+    env("SERVER_PORT").as[Port].default(port"9000")
+  )
+    .parMapN(HttpServerConfig.apply)
+
+def config[F[_]]: ConfigValue[F, Config] =
+  httpServerConfig.map(Config.apply)

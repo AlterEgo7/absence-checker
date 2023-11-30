@@ -8,6 +8,8 @@ object Dependencies {
   private val smithyModelVersion = "1.41.1"
   private val alloyVersion       = "0.2.8"
   private val logbackVersion     = "1.4.12"
+  private val cirisVersion       = "3.5.0"
+  private val ironVersion        = "2.3.0"
 
   val Fs2          = "co.fs2"        %% "fs2-core"            % fs2Version
   val Http4sServer = "org.http4s"    %% "http4s-ember-server" % http4sVersion
@@ -22,4 +24,9 @@ object Dependencies {
 
   val SmithyModel = "software.amazon.smithy"    % "smithy-model" % smithyModelVersion
   val Alloy       = "com.disneystreaming.alloy" % "alloy-core"   % alloyVersion
+
+  val Ciris       = "is.cir"             %% "ciris"        % cirisVersion
+  val CirisHttp4s = "is.cir"             %% "ciris-http4s" % cirisVersion
+  val Iron        = "io.github.iltotore" %% "iron"         % ironVersion
+  val IronCiris   = "io.github.iltotore" %% "iron-ciris"   % ironVersion
 }

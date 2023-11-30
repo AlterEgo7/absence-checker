@@ -36,7 +36,16 @@ lazy val app = project
   .settings(
     name        := "app",
     description := "Application classes",
-    libraryDependencies ++= Seq(Smithy4sHttp4s, Smithy4sHttp4sSwagger, Http4sServer, Logback, SmithyModel, Alloy)
+    libraryDependencies ++= Seq(
+      Smithy4sHttp4s,
+      Smithy4sHttp4sSwagger,
+      Http4sServer,
+      Logback,
+      SmithyModel,
+      Alloy,
+      CirisHttp4s,
+      IronCiris
+    )
   )
   .enablePlugins(Smithy4sCodegenPlugin)
   .dependsOn(core)
