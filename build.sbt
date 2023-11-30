@@ -44,7 +44,8 @@ lazy val app = project
       SmithyModel,
       Alloy,
       CirisHttp4s,
-      IronCiris
+      IronCiris,
+      Skunk
     )
   )
   .enablePlugins(Smithy4sCodegenPlugin)

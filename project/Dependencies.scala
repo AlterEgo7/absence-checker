@@ -10,6 +10,7 @@ object Dependencies {
   private val logbackVersion     = "1.4.12"
   private val cirisVersion       = "3.5.0"
   private val ironVersion        = "2.3.0"
+  private val skunkVersion       = "1.1.0-M2"
 
   val Fs2          = "co.fs2"        %% "fs2-core"            % fs2Version
   val Http4sServer = "org.http4s"    %% "http4s-ember-server" % http4sVersion
@@ -29,4 +30,6 @@ object Dependencies {
   val CirisHttp4s = "is.cir"             %% "ciris-http4s" % cirisVersion
   val Iron        = "io.github.iltotore" %% "iron"         % ironVersion
   val IronCiris   = "io.github.iltotore" %% "iron-ciris"   % ironVersion
+
+  val Skunk = "org.tpolecat" %% "skunk-core" % skunkVersion
 }
