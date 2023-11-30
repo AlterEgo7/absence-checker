@@ -4,7 +4,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / tlBaseVersion    := "0.1"
 ThisBuild / organization     := "com.sakisk"
-ThisBuild / organizationName := "SakisK"
+ThisBuild / organizationName := "Sakis Karagiannis"
 ThisBuild / startYear        := Some(2023)
 ThisBuild / licenses         := Seq(License.Apache2)
 
