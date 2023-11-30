@@ -30,7 +30,6 @@ jobs:
         os: [ubuntu-latest]
         scala: [3]
         java: [graalvm@17]
-        project: [rootJVM]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
@@ -57,18 +56,18 @@ jobs:
 
       - name: Check headers and formatting
         if: matrix.java == 'graalvm@17' && matrix.os == 'ubuntu-latest'
-        run: sbt 'project ${{ matrix.project }}' '++ ${{ matrix.scala }}' headerCheckAll scalafmtCheckAll 'project /' scalafmtSbtCheck
+        run: sbt '++ ${{ matrix.scala }}' headerCheckAll scalafmtCheckAll 'project /' scalafmtSbtCheck
 
       - name: Test
-        run: sbt 'project ${{ matrix.project }}' '++ ${{ matrix.scala }}' test
+        run: sbt '++ ${{ matrix.scala }}' test
 
       - name: Check binary compatibility
         if: matrix.java == 'graalvm@17' && matrix.os == 'ubuntu-latest'
-        run: sbt 'project ${{ matrix.project }}' '++ ${{ matrix.scala }}' mimaReportBinaryIssues
+        run: sbt '++ ${{ matrix.scala }}' mimaReportBinaryIssues
 
       - name: Generate API documentation
         if: matrix.java == 'graalvm@17' && matrix.os == 'ubuntu-latest'
-        run: sbt 'project ${{ matrix.project }}' '++ ${{ matrix.scala }}' doc
+        run: sbt '++ ${{ matrix.scala }}' doc
 
   dependency-submission:
     name: Submit Dependencies
@@ -100,5 +99,4 @@ jobs:
       - name: Submit Dependencies
         uses: scalacenter/sbt-dependency-submission@v2
         with:
-          modules-ignore: rootjs_3 rootjvm_3 rootnative_3
           configs-ignore: test scala-tool scala-doc-tool test-internal
