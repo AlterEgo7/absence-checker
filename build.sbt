@@ -45,7 +45,8 @@ lazy val app = project
       Alloy,
       CirisHttp4s,
       IronCiris,
-      Skunk
+      Skunk,
+      OpenTelemetry
     )
   )
   .enablePlugins(Smithy4sCodegenPlugin)

@@ -29,7 +29,10 @@ sealed abstract case class AppResources[F[_]](
 
 object AppResources:
 
-  def mkDbPool[F[_]: Temporal: Network: Console](config: DatabaseConfig): Resource[F, Tracer[F] => Resource[F, Session[F]]] =
+  private def mkDbPool[F[_]: Temporal: Network: Console](config: DatabaseConfig): Resource[
+    F,
+    Tracer[F] => Resource[F, Session[F]]
+  ] =
     Session.pooledF[F](
       host = config.host.toString,
       port = config.port.value,
