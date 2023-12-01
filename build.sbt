@@ -28,8 +28,9 @@ lazy val core = project
   .settings(
     name        := "core",
     description := "Core data types and operations",
-    libraryDependencies ++= Seq(Weaver, WeaverScalacheck)
+    libraryDependencies ++= Seq(Logback, Smithy4sCore, SmithyModel, Alloy, Log4Cats, Skunk, Weaver, WeaverScalacheck)
   )
+  .enablePlugins(Smithy4sCodegenPlugin)
 
 lazy val app = project
   .in(file("app"))
@@ -46,7 +47,8 @@ lazy val app = project
       CirisHttp4s,
       IronCiris,
       Skunk,
-      OpenTelemetry
+      OpenTelemetry,
+      Log4Cats
     )
   )
   .enablePlugins(Smithy4sCodegenPlugin)

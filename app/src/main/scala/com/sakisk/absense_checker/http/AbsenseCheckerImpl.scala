@@ -19,6 +19,7 @@ package com.sakisk.absense_checker.http
 import cats.Applicative
 import cats.syntax.all.*
 import com.sakisk.absense_checker.*
+import com.sakisk.absense_checker.types.*
 import smithy4s.Timestamp
 
 import java.time.Instant

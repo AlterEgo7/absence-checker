@@ -12,12 +12,14 @@ object Dependencies {
   private val ironVersion        = "2.3.0"
   private val skunkVersion       = "1.1.0-M2"
   private val otel4sVersion      = "0.3.0"
+  private val log4catsVersion    = "2.6.0"
 
   val Fs2          = "co.fs2"        %% "fs2-core"            % fs2Version
   val Http4sServer = "org.http4s"    %% "http4s-ember-server" % http4sVersion
   val Http4sDsl    = "org.http4s"    %% "http4s-dsl"          % http4sVersion
   val Logback      = "ch.qos.logback" % "logback-classic"     % logbackVersion
 
+  val Smithy4sCore          = "com.disneystreaming.smithy4s" %% "smithy4s-core"           % smithy4sVersion
   val Smithy4sHttp4s        = "com.disneystreaming.smithy4s" %% "smithy4s-http4s"         % smithy4sVersion
   val Smithy4sHttp4sSwagger = "com.disneystreaming.smithy4s" %% "smithy4s-http4s-swagger" % smithy4sVersion
 
@@ -34,4 +36,6 @@ object Dependencies {
 
   val Skunk         = "org.tpolecat"  %% "skunk-core"  % skunkVersion
   val OpenTelemetry = "org.typelevel" %% "otel4s-java" % otel4sVersion
+
+  val Log4Cats = "org.typelevel" %% "log4cats-slf4j" % log4catsVersion
 }
