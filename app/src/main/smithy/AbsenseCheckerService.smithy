@@ -3,7 +3,8 @@ metadata smithy4sErrorsAsScala3Unions = true
 namespace com.sakisk.absense_checker
 
 use alloy#simpleRestJson
-use alloy#uuidFormat
+use com.sakisk.absense_checker.types#TripId
+use com.sakisk.absense_checker.types#Trip
 
 @simpleRestJson
 service AbsenseCheckerService {
@@ -38,13 +39,6 @@ operation DeleteTrip {
   errors: [TripNotFound]
 }
 
-timestamp TripStartTime
-
-timestamp TripEndTime
-
-@uuidFormat
-string TripId
-
 structure TripIdFilter {
   @required
   @httpLabel
@@ -58,19 +52,6 @@ set TripSet {
 structure ListTripsOutput {
   @required
   trips: TripSet
-}
-
-structure Trip {
-  @required
-  id: TripId
-
-  @required
-  @timestampFormat("date-time")
-  start: TripStartTime
-
-  @required
-  @timestampFormat("date-time")
-  end: TripEndTime
 }
 
 @error("client")

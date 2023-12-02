@@ -16,22 +16,25 @@
 
 package com.sakisk.absense_checker
 
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.*
 import cats.syntax.all.*
 import com.sakisk.absense_checker.http.Routes
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.syntax.all.*
+import org.typelevel.otel4s.java.OtelJava
 
-object Main extends IOApp:
-  override def run(args: List[String]): IO[ExitCode] =
-    config[IO].load.flatMap: config =>
-      Routes[IO].routes
-        .flatMap: routes =>
-          EmberServerBuilder
-            .default[IO]
-            .withPort(config.httpServerConfig.port)
-            .withHost(config.httpServerConfig.host)
-            .withHttpApp((routes <+> Routes[IO].docRoutes).orNotFound)
-            .build
-        .useForever
-        .as(ExitCode.Success)
+object Main extends ResourceApp.Forever:
+  override def run(args: List[String]): Resource[IO, Unit] =
+    for {
+      tracerBuilder <- Resource.eval(OtelJava.global[IO].map(_.tracerProvider.tracer("Absense Checker")))
+      config        <- Resource.eval(config[IO].load)
+      appResources  <- AppResources.make[IO](config)
+      tracer        <- Resource.eval(tracerBuilder.get)
+      dbPool        <- appResources.tracedDbPool(tracer)
+      routes        <- Routes[IO].routes
+      _             <- EmberServerBuilder.default[IO]
+                         .withPort(config.httpServerConfig.port)
+                         .withHost(config.httpServerConfig.host)
+                         .withHttpApp((routes <+> Routes[IO].docRoutes).orNotFound)
+                         .build
+    } yield ()

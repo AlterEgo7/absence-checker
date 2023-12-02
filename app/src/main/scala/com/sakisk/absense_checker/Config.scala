@@ -20,9 +20,35 @@ import cats.syntax.all.*
 import ciris.*
 import ciris.http4s.*
 import com.comcast.ip4s.*
+import io.github.iltotore.iron.*
+import io.github.iltotore.iron.constraint.all.*
+import io.github.iltotore.iron.ciris.given
 
-final case class Config(httpServerConfig: HttpServerConfig)
+import scala.annotation.targetName
+
+opaque type DatabaseUsername = String :| MinLength[1]
+
+extension (username: DatabaseUsername)
+  @targetName("database_username_value") def value: String = username
+
+opaque type DatabasePassword = String
+extension (password: DatabasePassword)
+  @targetName("database_password_value") def value: String = password
+
+opaque type DatabaseName = String
+extension (dbName: DatabaseName)
+  @targetName("database_name_value") def value: String = dbName
+
+final case class Config(httpServerConfig: HttpServerConfig, databaseConfig: DatabaseConfig)
 final case class HttpServerConfig(host: Host, port: Port)
+
+final case class DatabaseConfig(
+  host: Host,
+  port: Port,
+  username: DatabaseUsername,
+  password: Secret[DatabasePassword],
+  database: DatabaseName
+)
 
 def httpServerConfig[F[_]]: ConfigValue[F, HttpServerConfig] =
   (
@@ -31,5 +57,19 @@ def httpServerConfig[F[_]]: ConfigValue[F, HttpServerConfig] =
   )
     .parMapN(HttpServerConfig.apply)
 
+def databaseConfig[F[_]]: ConfigValue[F, DatabaseConfig] =
+  (
+    env("DB_HOST").as[Host].default(host"localhost"),
+    env("DB_PORT").as[Port].default(port"5432"),
+    env("DB_USERNAME").as[DatabaseUsername],
+    env("DB_PASSWORD").as[DatabasePassword].secret,
+    env("DB_NAME").as[DatabaseName]
+  )
+    .parMapN(DatabaseConfig.apply)
+
 def config[F[_]]: ConfigValue[F, Config] =
-  httpServerConfig.map(Config.apply)
+  (
+    httpServerConfig[F],
+    databaseConfig[F]
+  )
+    .parMapN(Config.apply)

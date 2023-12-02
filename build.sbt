@@ -28,8 +28,9 @@ lazy val core = project
   .settings(
     name        := "core",
     description := "Core data types and operations",
-    libraryDependencies ++= Seq(Weaver, WeaverScalacheck)
+    libraryDependencies ++= Seq(Logback, Smithy4sCore, SmithyModel, Alloy, Log4Cats, Skunk, Weaver, WeaverScalacheck)
   )
+  .enablePlugins(Smithy4sCodegenPlugin)
 
 lazy val app = project
   .in(file("app"))
@@ -44,7 +45,17 @@ lazy val app = project
       SmithyModel,
       Alloy,
       CirisHttp4s,
-      IronCiris
+      IronCiris,
+      Skunk,
+      Otel4s,
+      Log4Cats,
+      OpenTelemetryExporter,
+      OpenTelemetryAutoconfigure
+    ),
+    run / javaOptions ++= Seq(
+      "-Dotel.java.global-autoconfigure.enabled=true",
+      "-Dotel.service.name=jaeger-example",
+      "-Dotel.metrics.exporter=none"
     )
   )
   .enablePlugins(Smithy4sCodegenPlugin)
