@@ -47,8 +47,15 @@ lazy val app = project
       CirisHttp4s,
       IronCiris,
       Skunk,
-      OpenTelemetry,
-      Log4Cats
+      Otel4s,
+      Log4Cats,
+      OpenTelemetryExporter,
+      OpenTelemetryAutoconfigure
+    ),
+    run / javaOptions ++= Seq(
+      "-Dotel.java.global-autoconfigure.enabled=true",
+      "-Dotel.service.name=jaeger-example",
+      "-Dotel.metrics.exporter=none"
     )
   )
   .enablePlugins(Smithy4sCodegenPlugin)
