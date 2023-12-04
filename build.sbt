@@ -59,4 +59,5 @@ lazy val app = project
     )
   )
   .enablePlugins(Smithy4sCodegenPlugin)
+  .enablePlugins(AtlasPlugin)
   .dependsOn(core)
