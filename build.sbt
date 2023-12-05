@@ -21,6 +21,8 @@ ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
 ThisBuild / tlFatalWarnings   := true
 ThisBuild / tlCiScalafmtCheck := true
 
+ThisBuild / Test / fork := true
+
 lazy val root = project.in(file(".")).aggregate(core, app)
 
 lazy val core = project
@@ -28,7 +30,18 @@ lazy val core = project
   .settings(
     name        := "core",
     description := "Core data types and operations",
-    libraryDependencies ++= Seq(Logback, Smithy4sCore, SmithyModel, Alloy, Log4Cats, Skunk, Weaver, WeaverScalacheck)
+    libraryDependencies ++= Seq(
+      Logback,
+      Smithy4sCore,
+      SmithyModel,
+      Alloy,
+      Log4Cats,
+      Skunk,
+      Weaver,
+      WeaverScalacheck,
+      TestContainersScala,
+      TestContainersScalaPostgres
+    )
   )
   .enablePlugins(Smithy4sCodegenPlugin)
 

@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-import weaver.SimpleIOSuite
+import cats.effect.*
+import com.sakisk.absense_checker.TestResources
+import org.typelevel.otel4s.trace.Tracer.Implicits.noop
+import skunk.*
+import skunk.implicits.*
+import skunk.codec.all.*
+import weaver.IOSuite
 
-object Test extends SimpleIOSuite:
+object Test extends IOSuite with TestResources:
+
+  override type Res = Resource[IO, Session[IO]]
+
+  override def sharedResource = sessionPool[IO]
 
   pureTest("a simple pure test"):
     expect(List(1).length == 1)
+
+  test("should get a postgres session"): postgres =>
+    postgres.use: session =>
+      session.unique(sql"SELECT 1".query(int4))
+        .map(i => expect(i == 1))
 
 end Test
