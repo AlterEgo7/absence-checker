@@ -54,6 +54,23 @@ jobs:
       - name: Install atlas cli
         run: 'curl -sSf https://atlasgo.sh | sh -s -- --community -y'
 
+      - run: mkdir -p ~/image-cache
+
+      - name: Cache docker images
+        id: image-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/image-cache
+          key: image-cache-${{ runner.os }}
+
+      - if: steps.image-cache.outputs.cache-hit != 'true'
+        run: |
+          docker pull postgres:16-alpine
+          docker save -o ~/image-cache/postgres.tar postgres:16-alpine
+
+      - if: steps.image-cache.outputs.cache-hit == 'true'
+        run: docker load -i ~/image-cache/postgres.tar
+
       - name: Check that workflows are up to date
         run: sbt --client githubWorkflowCheck
 
