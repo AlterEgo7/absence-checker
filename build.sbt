@@ -17,6 +17,13 @@ ThisBuild / testFrameworks += new TestFramework("weaver.framework.CatsEffect")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
 ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
+ThisBuild / githubWorkflowUseSbtThinClient      := true
+ThisBuild / githubWorkflowBuildPreamble         := Seq(
+  WorkflowStep.Run(
+    commands = List("curl -sSf https://atlasgo.sh | sh -s -- --community -y"),
+    name = "Install atlas cli".some
+  )
+)
 
 ThisBuild / tlFatalWarnings   := true
 ThisBuild / tlCiScalafmtCheck := true
