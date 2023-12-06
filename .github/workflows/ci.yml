@@ -51,9 +51,6 @@ jobs:
         if: matrix.java == 'graalvm@17' && steps.setup-java-graalvm-17.outputs.cache-hit == 'false'
         run: sbt --client '+update'
 
-      - name: Cache sbt and coursier
-        uses: coursier/cache-action@v6
-
       - name: Install atlas cli
         run: 'curl -sSf https://atlasgo.sh | sh -s -- --community -y'
 
@@ -118,9 +115,6 @@ jobs:
       - name: sbt update
         if: matrix.java == 'graalvm@17' && steps.setup-java-graalvm-17.outputs.cache-hit == 'false'
         run: sbt --client '+update'
-
-      - name: Cache sbt and coursier
-        uses: coursier/cache-action@v6
 
       - name: Submit Dependencies
         uses: scalacenter/sbt-dependency-submission@v2

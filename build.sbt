@@ -75,16 +75,6 @@ ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
 ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
 ThisBuild / githubWorkflowUseSbtThinClient      := true
-ThisBuild / githubWorkflowJobSetup ++= Seq(
-  WorkflowStep.Use(
-    name = "Cache sbt and coursier".some,
-    ref = UseRef.Public(
-      owner = "coursier",
-      repo = "cache-action",
-      ref = "v6"
-    )
-  )
-)
 ThisBuild / githubWorkflowBuildPreamble         := Seq(
   WorkflowStep.Run(
     commands = List("curl -sSf https://atlasgo.sh | sh -s -- --community -y"),
