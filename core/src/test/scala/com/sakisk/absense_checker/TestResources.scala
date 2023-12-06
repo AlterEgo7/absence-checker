@@ -33,7 +33,7 @@ trait TestResources:
 
   def sessionPool[F[_]: Async: Tracer: Network: Console]: SessionPool[F] =
     val postgresContainerDef = PostgreSQLContainer.Def(
-      dockerImageName = DockerImageName.parse("postgres:15"),
+      dockerImageName = DockerImageName.parse("postgres:16-alpine"),
       databaseName = "absense_checker",
       username = "absense_checker",
       password = "pass",
