@@ -6,7 +6,6 @@ use alloy#uuidFormat
 @uuidFormat
 string TripId
 
-@length(min: 1)
 string TripName
 
 timestamp TripStartTime
@@ -25,5 +24,6 @@ structure Trip {
   @timestampFormat("date-time")
   end: TripEndTime
 
+  @required
   name: TripName
 }

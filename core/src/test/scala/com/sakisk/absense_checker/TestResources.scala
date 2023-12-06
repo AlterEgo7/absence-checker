@@ -55,7 +55,8 @@ trait TestResources:
       atlasUrl     =
         s"postgres://${container.getUsername}:${container.getPassword}@${container.getHost}:${container.getMappedPort(5432)}/${container.getDatabaseName}?search_path=public&sslmode=disable"
       command      =
-        s"atlas schema apply --auto-approve --url $atlasUrl --to file://db/local/schema.hcl"
+        s"atlas schema apply --auto-approve --url $atlasUrl --to file://${sys.env("ATLAS_SCHEMA_FILE")}"
+      -           <- Resource.eval(Sync[F].blocking("pwd".!))
       _           <- Resource.eval(Sync[F].blocking(command.!))
       sessionPool <- Session.pooled[F](
                        host = container.getHost,

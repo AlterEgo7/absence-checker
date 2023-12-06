@@ -28,7 +28,7 @@ import java.util.UUID
 
 class AbsenseCheckerImpl[F[_]: Applicative] extends AbsenseCheckerService[F]:
 
-  override def insertTrip(id: TripId, start: TripStartTime, end: TripEndTime, option: Option[TripName]): F[Unit] = ???
+  override def insertTrip(id: TripId, start: TripStartTime, end: TripEndTime, name: TripName): F[Unit] = ???
 
   override def listTrips(): F[ListTripsOutput] = ???
 
@@ -36,7 +36,8 @@ class AbsenseCheckerImpl[F[_]: Applicative] extends AbsenseCheckerService[F]:
     Trip(
       TripId(UUID.randomUUID()),
       TripStartTime(Timestamp.fromInstant(Instant.now.minus(5, ChronoUnit.DAYS))),
-      TripEndTime(Timestamp.nowUTC())
+      TripEndTime(Timestamp.nowUTC()),
+      TripName("test")
     ).pure[F]
 
 end AbsenseCheckerImpl
