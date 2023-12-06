@@ -24,16 +24,16 @@ import org.typelevel.otel4s.trace.Tracer
 import skunk.Session
 
 sealed abstract case class AppResources[F[_]](
-  tracedDbPool: Tracer[F] => Resource[F, Session[F]]
+  tracedDbPool: Resource[F, Session[F]]
 )
 
 object AppResources:
 
-  private def mkDbPool[F[_]: Temporal: Network: Console](config: DatabaseConfig): Resource[
+  private def mkDbPool[F[_]: Tracer: Temporal: Network: Console](config: DatabaseConfig): Resource[
     F,
-    Tracer[F] => Resource[F, Session[F]]
+    Resource[F, Session[F]]
   ] =
-    Session.pooledF[F](
+    Session.pooled[F](
       host = config.host.toString,
       port = config.port.value,
       user = config.username.value,
@@ -42,7 +42,7 @@ object AppResources:
       max = 5
     )
 
-  def make[F[_]: Temporal: Network: Console](config: Config): Resource[F, AppResources[F]] =
+  def make[F[_]: Tracer: Temporal: Network: Console](config: Config): Resource[F, AppResources[F]] =
     for {
       dbPool <- mkDbPool(config.databaseConfig)
     } yield new AppResources(dbPool) {}

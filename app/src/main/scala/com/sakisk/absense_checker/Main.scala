@@ -22,19 +22,20 @@ import com.sakisk.absense_checker.http.Routes
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.syntax.all.*
 import org.typelevel.otel4s.java.OtelJava
+import org.typelevel.otel4s.trace.Tracer
 
 object Main extends ResourceApp.Forever:
   override def run(args: List[String]): Resource[IO, Unit] =
     for {
-      tracerBuilder <- Resource.eval(OtelJava.global[IO].map(_.tracerProvider.tracer("Absense Checker")))
-      config        <- Resource.eval(config[IO].load)
-      appResources  <- AppResources.make[IO](config)
-      tracer        <- Resource.eval(tracerBuilder.get)
-      dbPool        <- appResources.tracedDbPool(tracer)
-      routes        <- Routes[IO].routes
-      _             <- EmberServerBuilder.default[IO]
-                         .withPort(config.httpServerConfig.port)
-                         .withHost(config.httpServerConfig.host)
-                         .withHttpApp((routes <+> Routes[IO].docRoutes).orNotFound)
-                         .build
+      tracerBuilder    <- Resource.eval(OtelJava.global[IO].map(_.tracerProvider.tracer("Absense Checker")))
+      config           <- Resource.eval(config[IO].load)
+      given Tracer[IO] <- Resource.eval(tracerBuilder.get)
+      appResources     <- AppResources.make[IO](config)
+      dbPool           <- appResources.tracedDbPool
+      routes           <- Routes[IO].routes
+      _                <- EmberServerBuilder.default[IO]
+                            .withPort(config.httpServerConfig.port)
+                            .withHost(config.httpServerConfig.host)
+                            .withHttpApp((routes <+> Routes[IO].docRoutes).orNotFound)
+                            .build
     } yield ()
