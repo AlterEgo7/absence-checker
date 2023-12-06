@@ -14,12 +14,10 @@ ThisBuild / scalaVersion := Scala3
 
 ThisBuild / testFrameworks += new TestFramework("weaver.framework.CatsEffect")
 
-ThisBuild / githubWorkflowPublishTargetBranches := Seq()
-ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
-ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
-
 ThisBuild / tlFatalWarnings   := true
 ThisBuild / tlCiScalafmtCheck := true
+
+ThisBuild / Test / fork := true
 
 lazy val root = project.in(file(".")).aggregate(core, app)
 
@@ -28,7 +26,18 @@ lazy val core = project
   .settings(
     name        := "core",
     description := "Core data types and operations",
-    libraryDependencies ++= Seq(Logback, Smithy4sCore, SmithyModel, Alloy, Log4Cats, Skunk, Weaver, WeaverScalacheck)
+    libraryDependencies ++= Seq(
+      Logback,
+      Smithy4sCore,
+      SmithyModel,
+      Alloy,
+      Log4Cats,
+      Skunk,
+      Weaver,
+      WeaverScalacheck,
+      TestContainersScala,
+      TestContainersScalaPostgres
+    )
   )
   .enablePlugins(Smithy4sCodegenPlugin)
 
@@ -61,3 +70,56 @@ lazy val app = project
   .enablePlugins(Smithy4sCodegenPlugin)
   .enablePlugins(AtlasPlugin)
   .dependsOn(core)
+
+ThisBuild / githubWorkflowPublishTargetBranches := Seq()
+ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
+ThisBuild / githubWorkflowUseSbtThinClient      := true
+ThisBuild / githubWorkflowJobSetup ++= Seq(
+  WorkflowStep.Use(
+    name = "Cache sbt and coursier".some,
+    ref = UseRef.Public(
+      owner = "coursier",
+      repo = "cache-action",
+      ref = "v6"
+    )
+  )
+)
+ThisBuild / githubWorkflowBuildPreamble         := Seq(
+  WorkflowStep.Run(
+    commands = List("curl -sSf https://atlasgo.sh | sh -s -- --community -y"),
+    name = "Install atlas cli".some
+  ),
+  WorkflowStep.Run(commands =
+    List(
+      "mkdir -p ~/image-cache"
+    )
+  ),
+  WorkflowStep.Use(
+    name = "Cache docker images".some,
+    id = "image-cache".some,
+    ref =
+      UseRef.Public(
+        owner = "actions",
+        repo = "cache",
+        ref = "v1"
+      ),
+    params = Map(
+      "path" -> "~/image-cache",
+      "key"  -> "image-cache-${{ runner.os }}"
+    )
+  ),
+  WorkflowStep.Run(
+    cond = "steps.image-cache.outputs.cache-hit != 'true'".some,
+    commands = List(
+      "docker pull postgres:16-alpine",
+      "docker save -o ~/image-cache/postgres.tar postgres:16-alpine"
+    )
+  ),
+  WorkflowStep.Run(
+    cond = "steps.image-cache.outputs.cache-hit == 'true'".some,
+    commands = List(
+      "docker load -i ~/image-cache/postgres.tar"
+    )
+  )
+)
