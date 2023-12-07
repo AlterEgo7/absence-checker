@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 Sakis Karagiannis
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.sakisk.absense_checker.repositories
 
 import cats.effect.MonadCancelThrow
@@ -63,10 +79,10 @@ object TripRepositoryPostgres:
 
     val upsertSql: Command[Trip] =
       sql"""
-           INSERT INTO trips as t(id, start, "end", name)
+           INSERT INTO trips
            VALUES ($codec)
            ON CONFLICT (id)
-           DO UPDATE SET name = t.name, start = t.start, "end" = t."end"
+           DO UPDATE SET name = excluded.name, start = excluded.start, "end" = excluded."end"
          """.command
 
     val selectAllSql: Query[Void, Trip] =
@@ -77,7 +93,7 @@ object TripRepositoryPostgres:
     val selectWithEndAfter: Query[TripEndTime, Trip] =
       sql"""
            SELECT * FROM trips
-           WHERE "end" > $tripEndTime
+           WHERE "end" >= $tripEndTime
          """.query(codec).to[Trip]
 
   end TripRepositorySql
