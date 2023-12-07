@@ -75,6 +75,9 @@ ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
 ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
 ThisBuild / githubWorkflowUseSbtThinClient      := true
+ThisBuild / githubWorkflowEnv ++= Map(
+  "ATLAS_SCHEMA_FILE" -> "${{ github.workspace }}/db/local/schema.hcl"
+)
 ThisBuild / githubWorkflowBuildPreamble         := Seq(
   WorkflowStep.Run(
     commands = List("curl -sSf https://atlasgo.sh | sh -s -- --community -y"),

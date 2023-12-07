@@ -16,6 +16,7 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ATLAS_SCHEMA_FILE: ${{ github.workspace }}/db/local/schema.hcl
 
 
 concurrency:
