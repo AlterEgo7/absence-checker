@@ -4,6 +4,7 @@ namespace com.sakisk.absense_checker
 
 use alloy#simpleRestJson
 use com.sakisk.absense_checker.types#TripId
+use smithy4s.meta#packedInputs
 use com.sakisk.absense_checker.types#Trip
 
 @simpleRestJson
@@ -14,6 +15,7 @@ service AbsenseCheckerService {
 
 @http(method: "PUT", uri: "/trips", code: 201)
 @idempotent
+@packedInputs
 operation InsertTrip {
   input: Trip
   errors: [TripNotValid]

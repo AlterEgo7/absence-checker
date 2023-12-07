@@ -17,8 +17,10 @@
 package com.sakisk.absense_checker.http
 
 import cats.Applicative
+import cats.effect.kernel.Async
 import cats.syntax.all.*
 import com.sakisk.absense_checker.*
+import com.sakisk.absense_checker.repositories.TripRepository
 import com.sakisk.absense_checker.types.*
 import smithy4s.Timestamp
 
@@ -26,11 +28,13 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-class AbsenseCheckerImpl[F[_]: Applicative] extends AbsenseCheckerService[F]:
+class AbsenseCheckerImpl[F[_]: Applicative: Async](repo: TripRepository[F]) extends AbsenseCheckerService[F]:
 
-  override def insertTrip(id: TripId, start: TripStartTime, end: TripEndTime, name: TripName): F[Unit] = ???
+  override def insertTrip(trip: Trip): F[Unit] =
+    repo.upsert(trip)
 
-  override def listTrips(): F[ListTripsOutput] = ???
+  override def listTrips(): F[ListTripsOutput] =
+    repo.streamAll.compile.toList.map(trips => ListTripsOutput(trips.toSet))
 
   override def getTrip(id: TripId): F[Trip] =
     Trip(

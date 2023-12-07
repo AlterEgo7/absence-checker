@@ -44,8 +44,8 @@ lazy val core = project
 lazy val app = project
   .in(file("app"))
   .settings(
-    name        := "app",
-    description := "Application classes",
+    name                 := "app",
+    description          := "Application classes",
     libraryDependencies ++= Seq(
       Smithy4sHttp4s,
       Smithy4sHttp4sSwagger,
@@ -61,14 +61,28 @@ lazy val app = project
       OpenTelemetryExporter,
       OpenTelemetryAutoconfigure
     ),
+    run / fork := true,
     run / javaOptions ++= Seq(
       "-Dotel.java.global-autoconfigure.enabled=true",
       "-Dotel.service.name=jaeger-example",
       "-Dotel.metrics.exporter=none"
-    )
+    ),
+    dockerBaseImage      := "eclipse-temurin:21-jre-alpine",
+    Docker / packageName := "absense-checker",
+    Docker / version     := "0.1",
+    dockerEnvVars ++= Map(
+      "DB_HOST"     -> "postgres",
+      "DB_PORT"     -> sys.env("DB_PORT"),
+      "DB_USERNAME" -> sys.env("DB_USERNAME"),
+      "DB_PASSWORD" -> sys.env("DB_PASSWORD"),
+      "DB_NAME"     -> sys.env("DB_NAME")
+    ),
+    dockerExposedPorts += 9000
   )
   .enablePlugins(Smithy4sCodegenPlugin)
   .enablePlugins(AtlasPlugin)
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
   .dependsOn(core)
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()

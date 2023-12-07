@@ -53,9 +53,10 @@ object TripRepositoryPostgres:
           postgres.use(_.option(findSql)(tripId))
 
       override def streamAll: Stream[F, Trip] =
-        Stream.resource(Tracer[F].span("Select all Trips").resource).flatMap: _ =>
-          Stream.resource(postgres).flatMap: session =>
+        Stream.resource(Tracer[F].span("Select all Trips").resource).flatMap: res =>
+          Stream.resource(postgres).translate(res.trace).flatMap: session =>
             session.stream(selectAllSql)(Void, 1024)
+              .translate(res.trace)
 
       override def streamWithEndAfter(endThreshold: TripEndTime): Stream[F, Trip] =
         Stream.resource(Tracer[F].span(

@@ -19,6 +19,7 @@ package com.sakisk.absense_checker
 import cats.effect.*
 import cats.effect.std.Console
 import cats.syntax.all.*
+import com.sakisk.absense_checker.repositories.{TripRepository, TripRepositoryPostgres}
 import fs2.io.net.Network
 import org.typelevel.log4cats.Logger
 import org.typelevel.otel4s.trace.Tracer
@@ -27,7 +28,8 @@ import skunk.implicits.*
 import skunk.codec.all.*
 
 sealed abstract case class AppResources[F[_]](
-  tracedDbPool: Resource[F, Session[F]]
+  tracedDbPool: Resource[F, Session[F]],
+  tripRepository: TripRepository[F]
 )
 
 object AppResources:
@@ -54,7 +56,8 @@ object AppResources:
 
   def make[F[_]: Logger: Tracer: Temporal: Network: Console](config: Config): Resource[F, AppResources[F]] =
     for {
-      dbPool <- mkDbPool(config.databaseConfig)
-    } yield new AppResources(dbPool) {}
+      dbPool        <- mkDbPool(config.databaseConfig)
+      tripRepository = TripRepositoryPostgres(dbPool)
+    } yield new AppResources(dbPool, tripRepository) {}
 
 end AppResources
