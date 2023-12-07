@@ -21,6 +21,8 @@ import cats.syntax.all.*
 import com.sakisk.absense_checker.http.Routes
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.syntax.all.*
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.otel4s.java.OtelJava
 import org.typelevel.otel4s.trace.Tracer
 
@@ -30,6 +32,7 @@ object Main extends ResourceApp.Forever:
       tracerBuilder    <- Resource.eval(OtelJava.global[IO].map(_.tracerProvider.tracer("Absense Checker")))
       config           <- Resource.eval(config[IO].load)
       given Tracer[IO] <- Resource.eval(tracerBuilder.get)
+      given Logger[IO] <- Resource.eval(Slf4jLogger.create[IO])
       appResources     <- AppResources.make[IO](config)
       dbPool           <- appResources.tracedDbPool
       routes           <- Routes[IO].routes

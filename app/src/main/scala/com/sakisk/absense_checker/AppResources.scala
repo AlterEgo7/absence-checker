@@ -20,8 +20,11 @@ import cats.effect.*
 import cats.effect.std.Console
 import cats.syntax.all.*
 import fs2.io.net.Network
+import org.typelevel.log4cats.Logger
 import org.typelevel.otel4s.trace.Tracer
-import skunk.Session
+import skunk.*
+import skunk.implicits.*
+import skunk.codec.all.*
 
 sealed abstract case class AppResources[F[_]](
   tracedDbPool: Resource[F, Session[F]]
@@ -29,10 +32,15 @@ sealed abstract case class AppResources[F[_]](
 
 object AppResources:
 
-  private def mkDbPool[F[_]: Tracer: Temporal: Network: Console](config: DatabaseConfig): Resource[
+  private def mkDbPool[F[_]: Logger: Tracer: Temporal: Network: Console](config: DatabaseConfig): Resource[
     F,
     Resource[F, Session[F]]
-  ] =
+  ] = {
+    def checkPostgresConnection(postgres: Resource[F, Session[F]]) = postgres.use: session =>
+      session.unique(sql"SELECT version();".query(text))
+        .flatMap: v =>
+          Logger[F].info(s"Connected to Postgres: $v")
+
     Session.pooled[F](
       host = config.host.toString,
       port = config.port.value,
@@ -41,8 +49,10 @@ object AppResources:
       password = config.password.value.value.some,
       max = 5
     )
+      .evalTap(checkPostgresConnection)
+  }
 
-  def make[F[_]: Tracer: Temporal: Network: Console](config: Config): Resource[F, AppResources[F]] =
+  def make[F[_]: Logger: Tracer: Temporal: Network: Console](config: Config): Resource[F, AppResources[F]] =
     for {
       dbPool <- mkDbPool(config.databaseConfig)
     } yield new AppResources(dbPool) {}

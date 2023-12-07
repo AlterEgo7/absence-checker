@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-import cats.effect.*
-import com.sakisk.absense_checker.TestResources
-import org.typelevel.otel4s.trace.Tracer.Implicits.noop
-import skunk.*
-import skunk.implicits.*
+package com.sakisk.absense_checker.sql.codecs
+
+import com.sakisk.absense_checker.types.*
+import skunk.Codec
 import skunk.codec.all.*
-import weaver.IOSuite
+import smithy4s.Timestamp
 
-object Test extends IOSuite with TestResources:
+val tripId: Codec[TripId] = uuid.imap(TripId.apply)(_.value)
 
-  override type Res = Resource[IO, Session[IO]]
+val tripName: Codec[TripName] = text.imap(TripName.apply)(_.value)
 
-  override def sharedResource = sessionPool[IO]
+val smithyTimestamp: Codec[Timestamp] = timestamptz.imap(Timestamp.fromOffsetDateTime)(_.toOffsetDateTime)
 
-  pureTest("a simple pure test"):
-    expect(List(1).length == 1)
-
-  test("should get a postgres session"): postgres =>
-    postgres.use: session =>
-      session.unique(sql"SELECT 1".query(int4))
-        .map(i => expect(i == 1))
-
-end Test
+val tripStartTime: Codec[TripStartTime] = smithyTimestamp.imap(TripStartTime.apply)(_.value)
+val tripEndTime: Codec[TripEndTime]     = smithyTimestamp.imap(TripEndTime.apply)(_.value)

@@ -6,15 +6,16 @@ table "trips" {
     type = uuid
     null = false
   }
-  column "name" {
-    type = text
-  }
   column "start" {
     type = timestamptz
     null = false
   }
   column "end" {
     type = timestamptz
+    null = false
+  }
+  column "name" {
+    type = text
     null = false
   }
 
