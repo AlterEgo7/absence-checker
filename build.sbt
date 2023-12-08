@@ -20,6 +20,10 @@ ThisBuild / tlCiScalafmtCheck := true
 ThisBuild / Test / fork := true
 
 lazy val root = project.in(file(".")).aggregate(core, app)
+  .settings(
+    jibDockerBuild / aggregate := false,
+    jibImageBuild / aggregate := false
+  )
 
 lazy val core = project
   .in(file("core"))
@@ -44,8 +48,8 @@ lazy val core = project
 lazy val app = project
   .in(file("app"))
   .settings(
-    name                 := "app",
-    description          := "Application classes",
+    name         := "app",
+    description  := "Application classes",
     libraryDependencies ++= Seq(
       Smithy4sHttp4s,
       Smithy4sHttp4sSwagger,
@@ -61,28 +65,29 @@ lazy val app = project
       OpenTelemetryExporter,
       OpenTelemetryAutoconfigure
     ),
-    run / fork := true,
+    run / fork   := true,
     run / javaOptions ++= Seq(
       "-Dotel.java.global-autoconfigure.enabled=true",
       "-Dotel.service.name=jaeger-example",
       "-Dotel.metrics.exporter=none"
     ),
-    dockerBaseImage      := "eclipse-temurin:21-jre-alpine",
-    Docker / packageName := "absense-checker",
-    Docker / version     := "0.1",
-    dockerEnvVars ++= Map(
+    jibBaseImage := "eclipse-temurin:21-jre-alpine",
+    jibUseCurrentTimestamp := true,
+    jibName      := "absense-checker",
+    jibVersion   := "0.1",
+    jibEnvironment ++= Map(
       "DB_HOST"     -> "postgres",
       "DB_PORT"     -> sys.env("DB_PORT"),
       "DB_USERNAME" -> sys.env("DB_USERNAME"),
       "DB_PASSWORD" -> sys.env("DB_PASSWORD"),
-      "DB_NAME"     -> sys.env("DB_NAME")
+      "DB_NAME"     -> sys.env("DB_NAME"),
+      "JAVA_OPTS"   -> "-Dotel.java.global-autoconfigure.enabled=true -Dotel.service.name=jaeger-example -Dotel.metrics.exporter=none"
     ),
-    dockerExposedPorts += 9000
+    jibTcpPorts += 9000
   )
   .enablePlugins(Smithy4sCodegenPlugin)
   .enablePlugins(AtlasPlugin)
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(DockerPlugin)
+  .enablePlugins(JibPlugin)
   .dependsOn(core)
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
