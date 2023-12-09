@@ -104,10 +104,14 @@ object TripRepositoryPostgresTests extends IOSuite with TestResources:
     val repo = TripRepositoryPostgres(postgres)
 
     for {
-      _     <- List(trip1, trip2).traverse(repo.upsert)
-      after <- repo.streamWithEndAfter(
-                 TripEndTime(Timestamp.fromInstant(Instant.now.minus(4, ChronoUnit.DAYS)))
-               ).compile.toList
-    } yield expect(after.map(_.id).contains(trip2.id))
+      _        <- List(trip1, trip2).traverse(repo.upsert)
+      threshold = Timestamp.fromInstant(Instant.now.minus(4, ChronoUnit.DAYS))
+      after    <- repo.streamWithEndAfter(
+                    TripEndTime(threshold)
+                  ).compile.toList
+    } yield expect.all(
+      after.map(_.id).contains(trip2.id),
+      after.forall(_.end.value.isAfter(threshold))
+    )
 
 end TripRepositoryPostgresTests
