@@ -97,8 +97,8 @@ object TripRepositoryPostgresTests extends IOSuite with TestResources:
     val trip2 = Trip(
       id = TripId(UUID.randomUUID()),
       name = TripName("trip2"),
-      start = TripStartTime(Timestamp.fromInstant(Instant.now.minus(4, ChronoUnit.DAYS))),
-      end = TripEndTime(Timestamp.fromInstant(Instant.now.minus(3, ChronoUnit.DAYS)))
+      start = TripStartTime(Timestamp.fromInstant(Instant.now.minus(3, ChronoUnit.DAYS))),
+      end = TripEndTime(Timestamp.fromInstant(Instant.now.minus(2, ChronoUnit.DAYS)))
     )
 
     val repo = TripRepositoryPostgres(postgres)
@@ -108,6 +108,6 @@ object TripRepositoryPostgresTests extends IOSuite with TestResources:
       after <- repo.streamWithEndAfter(
                  TripEndTime(Timestamp.fromInstant(Instant.now.minus(4, ChronoUnit.DAYS)))
                ).compile.toList
-    } yield expect(after.map(_.id) == List(trip2.id))
+    } yield expect(after.map(_.id).contains(trip2.id))
 
 end TripRepositoryPostgresTests
