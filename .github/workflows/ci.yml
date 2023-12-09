@@ -15,8 +15,12 @@ on:
     tags: [v*]
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  DB_NAME: absense_checker
   ATLAS_SCHEMA_FILE: ${{ github.workspace }}/db/local/schema.hcl
+  DB_USERNAME: absense_checker
+  DB_PORT: 5432
+  DB_PASSWORD: pass
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
 concurrency:

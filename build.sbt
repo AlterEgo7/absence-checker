@@ -22,7 +22,7 @@ ThisBuild / Test / fork := true
 lazy val root = project.in(file(".")).aggregate(core, app)
   .settings(
     jibDockerBuild / aggregate := false,
-    jibImageBuild / aggregate := false
+    jibImageBuild / aggregate  := false
   )
 
 lazy val core = project
@@ -48,8 +48,8 @@ lazy val core = project
 lazy val app = project
   .in(file("app"))
   .settings(
-    name         := "app",
-    description  := "Application classes",
+    name                   := "app",
+    description            := "Application classes",
     libraryDependencies ++= Seq(
       Smithy4sHttp4s,
       Smithy4sHttp4sSwagger,
@@ -65,16 +65,16 @@ lazy val app = project
       OpenTelemetryExporter,
       OpenTelemetryAutoconfigure
     ),
-    run / fork   := true,
+    run / fork             := true,
     run / javaOptions ++= Seq(
       "-Dotel.java.global-autoconfigure.enabled=true",
       "-Dotel.service.name=jaeger-example",
       "-Dotel.metrics.exporter=none"
     ),
-    jibBaseImage := "eclipse-temurin:21-jre-alpine",
+    jibBaseImage           := "eclipse-temurin:21-jre-alpine",
     jibUseCurrentTimestamp := true,
-    jibName      := "absense-checker",
-    jibVersion   := "0.1",
+    jibName                := "absense-checker",
+    jibVersion             := "0.1",
     jibEnvironment ++= Map(
       "DB_HOST"     -> "postgres",
       "DB_PORT"     -> sys.env("DB_PORT"),
@@ -95,7 +95,11 @@ ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
 ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
 ThisBuild / githubWorkflowUseSbtThinClient      := true
 ThisBuild / githubWorkflowEnv ++= Map(
-  "ATLAS_SCHEMA_FILE" -> "${{ github.workspace }}/db/local/schema.hcl"
+  "ATLAS_SCHEMA_FILE" -> "${{ github.workspace }}/db/local/schema.hcl",
+  "DB_USERNAME"       -> "absense_checker",
+  "DB_PASSWORD"       -> "pass",
+  "DB_NAME"           -> "absense_checker",
+  "DB_PORT"           -> "5432"
 )
 ThisBuild / githubWorkflowBuildPreamble         := Seq(
   WorkflowStep.Run(
