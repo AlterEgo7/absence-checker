@@ -24,6 +24,8 @@ object Dependencies {
   val Smithy4sCore          = "com.disneystreaming.smithy4s" %% "smithy4s-core"           % smithy4sVersion
   val Smithy4sHttp4s        = "com.disneystreaming.smithy4s" %% "smithy4s-http4s"         % smithy4sVersion
   val Smithy4sHttp4sSwagger = "com.disneystreaming.smithy4s" %% "smithy4s-http4s-swagger" % smithy4sVersion
+  val Smithy4sCats          = "com.disneystreaming.smithy4s" %% "smithy4s-cats"           % smithy4sVersion
+  val Smithy4sProtocol      = "com.disneystreaming.smithy4s"  % "smithy4s-protocol"       % smithy4sVersion
 
   val Weaver                      = "com.disneystreaming" %% "weaver-cats"          % weaverVersion              % Test
   val WeaverScalacheck            = "com.disneystreaming" %% "weaver-scalacheck"    % weaverVersion              % Test

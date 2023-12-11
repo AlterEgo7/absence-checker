@@ -37,6 +37,8 @@ trait TripRepository[F[_]] {
   def streamAll: Stream[F, Trip]
 
   def streamWithEndAfter(endThreshold: TripEndTime): Stream[F, Trip]
+
+  def delete(tripId: TripId): F[Unit]
 }
 
 object TripRepositoryPostgres:
@@ -69,6 +71,12 @@ object TripRepositoryPostgres:
           Stream.resource(postgres).flatMap: session =>
             session.stream(selectWithEndAfter)(endThreshold, 1024)
 
+      override def delete(tripId: TripId): F[Unit] =
+        Tracer[F].span("Delete Trip", Attribute("id", tripId.value.toString)).surround:
+          postgres.use(_.execute(deleteSql)(tripId)).void
+
+    end new
+
   private object TripRepositorySql:
     val codec: Codec[Trip] = (tripId *: tripStartTime *: tripEndTime *: tripName).to[Trip]
 
@@ -96,6 +104,12 @@ object TripRepositoryPostgres:
            SELECT * FROM trips
            WHERE "end" >= $tripEndTime
          """.query(codec).to[Trip]
+
+    val deleteSql: Command[TripId] =
+      sql"""
+           DELETE FROM trips
+           WHERE id = $tripId
+         """.command
 
   end TripRepositorySql
 

@@ -17,11 +17,12 @@
 package com.sakisk.absense_checker.algebras
 
 import com.sakisk.absense_checker.types.{Trip, TripId}
+import fs2.*
 
 trait TripAlgebra[F[_]] extends TripCommands[F] with TripQueries[F]
 
 trait TripCommands[F[_]] {
-  def insert(trip: Trip): F[Unit]
+  def put(trip: Trip): F[Unit]
 
   def delete(tripId: TripId): F[Unit]
 }
@@ -29,5 +30,5 @@ trait TripCommands[F[_]] {
 trait TripQueries[F[_]] {
   def getTrip(tripId: TripId): F[Option[Trip]]
 
-  def listTrips(): F[List[Trip]]
+  def listTrips: Stream[F, Trip]
 }
