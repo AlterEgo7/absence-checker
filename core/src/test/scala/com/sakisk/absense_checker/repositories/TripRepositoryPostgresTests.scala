@@ -114,4 +114,14 @@ object TripRepositoryPostgresTests extends IOSuite with TestResources:
       after.forall(_.end.value.isAfter(threshold))
     )
 
+  test("delete correctly deletes an existing trip"): postgres =>
+    val trip = tripGenerator.generateSingle
+    val repo = TripRepositoryPostgres(postgres)
+
+    for {
+      _         <- repo.upsert(trip)
+      _         <- repo.delete(trip.id)
+      maybeTrip <- repo.find(trip.id)
+    } yield expect(maybeTrip.isEmpty)
+
 end TripRepositoryPostgresTests

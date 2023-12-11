@@ -34,6 +34,8 @@ lazy val core = project
       Logback,
       Smithy4sCore,
       SmithyModel,
+      Smithy4sCats,
+      Smithy4sProtocol,
       Alloy,
       Log4Cats,
       Skunk,
