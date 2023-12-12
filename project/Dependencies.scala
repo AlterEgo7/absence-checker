@@ -5,7 +5,7 @@ object Dependencies {
   private val fs2Version                 = "3.9.3"
   private val weaverVersion              = "0.8.3"
   private val smithy4sVersion            = "0.18.3"
-  private val smithyModelVersion         = "1.41.1"
+  private val smithyModelVersion         = "1.42.0"
   private val alloyVersion               = "0.2.8"
   private val logbackVersion             = "1.4.14"
   private val cirisVersion               = "3.5.0"
@@ -13,7 +13,7 @@ object Dependencies {
   private val skunkVersion               = "1.1.0-M2"
   private val otel4sVersion              = "0.3.0"
   private val log4catsVersion            = "2.6.0"
-  private val openTelemetryVersion       = "1.32.0"
+  private val openTelemetryVersion       = "1.33.0"
   private val testContainersScalaVersion = "0.41.0"
 
   val Fs2          = "co.fs2"        %% "fs2-core"            % fs2Version

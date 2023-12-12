@@ -35,7 +35,6 @@ lazy val core = project
       Smithy4sCore,
       SmithyModel,
       Smithy4sCats,
-      Smithy4sProtocol,
       Alloy,
       Log4Cats,
       Skunk,
@@ -79,12 +78,12 @@ lazy val app = project
     jibVersion             := "0.1",
     jibEnvironment ++= Map(
       "DB_HOST"     -> "postgres",
-      "DB_PORT"     -> sys.env("DB_PORT"),
-      "DB_USERNAME" -> sys.env("DB_USERNAME"),
-      "DB_PASSWORD" -> sys.env("DB_PASSWORD"),
-      "DB_NAME"     -> sys.env("DB_NAME"),
-      "JAVA_OPTS"   -> "-Dotel.java.global-autoconfigure.enabled=true -Dotel.service.name=jaeger-example -Dotel.metrics.exporter=none"
-    ),
+      "DB_USERNAME" -> sys.env.getOrElse("DB_USERNAME", "absense_cheker"),
+      "DB_PASSWORD" -> sys.env.getOrElse("DB_PASSWORD", ""),
+      "DB_NAME"     -> sys.env.getOrElse("DB_NAME", "absense_checker")
+    )
+      ++ sys.env.get("DB_PORT").map(p => "DB_PORT" -> p)
+      ++ Map("JAVA_OPTS" -> "-Dotel.java.global-autoconfigure.enabled=true -Dotel.service.name=jaeger-example -Dotel.metrics.exporter=none"),
     jibTcpPorts += 9000
   )
   .enablePlugins(Smithy4sCodegenPlugin)
