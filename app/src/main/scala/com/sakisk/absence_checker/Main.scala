@@ -35,7 +35,7 @@ object Main extends ResourceApp.Forever:
       given Logger[IO] <- Resource.eval(Slf4jLogger.create[IO])
       config           <- Resource.eval(Tracer[IO].span("Config read").surround(config[IO].load))
       appResources     <- Tracer[IO].span("startup").resource.flatMap(res => AppResources.make[IO](config).mapK(res.trace))
-      routes            = Routes[IO](appResources.tripRepository)
+      routes            = Routes[IO](appResources.absenceRepository)
       appRoutes        <- routes.routes.map(r => middleware.Logger.httpRoutes(true, true)(r))
       _                <- EmberServerBuilder.default[IO]
                             .withPort(config.httpServerConfig.port)

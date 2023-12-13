@@ -3,66 +3,66 @@ metadata smithy4sErrorsAsScala3Unions = true
 namespace com.sakisk.absence_checker
 
 use alloy#simpleRestJson
-use com.sakisk.absence_checker.types#TripId
+use com.sakisk.absence_checker.types#AbsenceId
+use com.sakisk.absence_checker.types#Absence
 use smithy4s.meta#packedInputs
-use com.sakisk.absence_checker.types#Trip
 
 @simpleRestJson
 service AbsenceCheckerService {
   version: "0.1.0"
-  operations: [InsertTrip, ListTrips, GetTrip]
+  operations: [InsertAbsence, ListAbsences, GetAbsence]
 }
 
-@http(method: "PUT", uri: "/trips", code: 201)
+@http(method: "PUT", uri: "/absences", code: 201)
 @idempotent
 @packedInputs
-operation InsertTrip {
-  input: Trip
-  errors: [TripNotValid]
+operation InsertAbsence {
+  input: Absence
+  errors: [AbsenceNotValid]
 }
 
-@http(method: "GET", uri: "/trips", code: 200)
-operation ListTrips {
-  output: ListTripsOutput
+@http(method: "GET", uri: "/absences", code: 200)
+operation ListAbsences {
+  output: ListAbsencesOutput
 }
 
 
-@http(method: "GET", uri: "/trips/{id}", code: 200)
-operation GetTrip {
-  input: TripIdFilter
-  output: Trip
-  errors: [TripNotFound]
+@http(method: "GET", uri: "/absences/{id}", code: 200)
+operation GetAbsence {
+  input: AbsenceIdFilter
+  output: Absence
+  errors: [AbsenceNotFound]
 }
 
-@http(method: "DELETE", uri: "/trips/{id}", code: 204)
+@http(method: "DELETE", uri: "/absences/{id}", code: 204)
 @idempotent
-operation DeleteTrip {
-  input: TripIdFilter
-  errors: [TripNotFound]
+operation DeleteAbsences {
+  input: AbsenceIdFilter
+  errors: [AbsenceNotFound]
 }
 
-structure TripIdFilter {
+structure AbsenceIdFilter {
   @required
   @httpLabel
-  id: TripId
+  id: AbsenceId
 }
 
-set TripSet {
-  member: Trip
+set AbsenceSet {
+  member: Absence
 }
 
-structure ListTripsOutput {
+structure ListAbsencesOutput {
   @required
-  trips: TripSet
+  absences: AbsenceSet
 }
 
 @error("client")
 @httpError(404)
-structure TripNotFound {}
+structure AbsenceNotFound {}
 
 @error("client")
 @httpError(422)
-structure TripNotValid {
+structure AbsenceNotValid {
   @required
   reason: String
 }

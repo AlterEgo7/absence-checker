@@ -1,6 +1,6 @@
 schema "public" {}
 
-table "trips" {
+table "absences" {
   schema = schema.public
   column "id" {
     type = uuid
@@ -23,7 +23,7 @@ table "trips" {
     columns = [column.id]
   }
 
-  index "end_time" {
+  index "absence_end_time" {
     on {
       column = column.end
     }

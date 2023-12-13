@@ -16,19 +16,19 @@
 
 package com.sakisk.absence_checker.algebras
 
-import com.sakisk.absence_checker.types.{Trip, TripId}
+import com.sakisk.absence_checker.types.*
 import fs2.*
 
-trait TripAlgebra[F[_]] extends TripCommands[F] with TripQueries[F]
+trait AbsenceAlgebra[F[_]] extends AbsenceCommands[F] with AbsenceQueries[F]
 
-trait TripCommands[F[_]] {
-  def put(trip: Trip): F[Unit]
+trait AbsenceCommands[F[_]] {
+  def put(absence: Absence): F[Unit]
 
-  def delete(tripId: TripId): F[Unit]
+  def delete(absenceId: AbsenceId): F[Unit]
 }
 
-trait TripQueries[F[_]] {
-  def getTrip(tripId: TripId): F[Option[Trip]]
+trait AbsenceQueries[F[_]] {
+  def getAbsence(absenceId: AbsenceId): F[Option[Absence]]
 
-  def listTrips: Stream[F, Trip]
+  def listAbsences: Stream[F, Absence]
 }

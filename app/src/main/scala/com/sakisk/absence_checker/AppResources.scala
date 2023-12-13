@@ -19,7 +19,7 @@ package com.sakisk.absence_checker
 import cats.effect.*
 import cats.effect.std.Console
 import cats.syntax.all.*
-import com.sakisk.absence_checker.repositories.{TripRepository, TripRepositoryPostgres}
+import com.sakisk.absence_checker.repositories.{AbsenceRepository, AbsenceRepositoryPostgres}
 import fs2.io.net.Network
 import org.typelevel.log4cats.Logger
 import org.typelevel.otel4s.trace.Tracer
@@ -29,7 +29,7 @@ import skunk.codec.all.*
 
 sealed abstract case class AppResources[F[_]](
   tracedDbPool: Resource[F, Session[F]],
-  tripRepository: TripRepository[F]
+  absenceRepository: AbsenceRepository[F]
 )
 
 object AppResources:
@@ -39,7 +39,7 @@ object AppResources:
     Resource[F, Session[F]]
   ] = {
     def checkPostgresConnection(postgres: Resource[F, Session[F]]) = postgres.use: session =>
-      session.unique(sql"SELECT version();".query(text))
+      session.unique(sql"SELECT VERSION();".query(text))
         .flatMap: v =>
           Logger[F].info(s"Connected to Postgres: $v")
 
@@ -56,8 +56,8 @@ object AppResources:
 
   def make[F[_]: Logger: Tracer: Temporal: Network: Console](config: Config): Resource[F, AppResources[F]] =
     for {
-      dbPool        <- mkDbPool(config.databaseConfig)
-      tripRepository = TripRepositoryPostgres(dbPool)
-    } yield new AppResources(dbPool, tripRepository) {}
+      dbPool           <- mkDbPool(config.databaseConfig)
+      absenceRepository = AbsenceRepositoryPostgres(dbPool)
+    } yield new AppResources(dbPool, absenceRepository) {}
 
 end AppResources
