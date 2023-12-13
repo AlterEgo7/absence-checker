@@ -19,26 +19,26 @@ package com.sakisk.absence_checker.fakes
 import cats.Functor
 import cats.effect.Ref
 import cats.syntax.all.*
-import com.sakisk.absence_checker.repositories.TripRepository
-import com.sakisk.absence_checker.types.{Trip, TripEndTime, TripId}
+import com.sakisk.absence_checker.repositories.AbsenceRepository
+import com.sakisk.absence_checker.types.*
 import fs2.*
 
-class MockTripRepository[F[_]: Functor](state: Ref[F, Map[TripId, Trip]]) extends TripRepository[F]:
+class MockAbsenceRepository[F[_]: Functor](state: Ref[F, Map[AbsenceId, Absence]]) extends AbsenceRepository[F]:
 
-  val getState: F[Map[TripId, Trip]] = state.get
+  val getState: F[Map[AbsenceId, Absence]] = state.get
 
-  override def upsert(trip: Trip): F[Unit] =
-    state.update(_.updated(trip.id, trip))
+  override def upsert(absence: Absence): F[Unit] =
+    state.update(_.updated(absence.id, absence))
 
-  override def find(tripId: TripId): F[Option[Trip]] =
-    state.get.map(state => state.get(tripId))
+  override def find(absenceId: AbsenceId): F[Option[Absence]] =
+    state.get.map(state => state.get(absenceId))
 
-  override def streamAll: fs2.Stream[F, Trip] =
+  override def streamAll: fs2.Stream[F, Absence] =
     Stream.eval(state.get).flatMap(map => Stream.iterable(map.values))
 
-  override def streamWithEndAfter(endThreshold: TripEndTime): fs2.Stream[F, Trip] =
+  override def streamWithEndAfter(endThreshold: AbsenceEndTime): fs2.Stream[F, Absence] =
     Stream.eval(state.get).flatMap(map =>
-      Stream.iterable(map.filter { case (_, trip) => trip.end.value.isAfter(endThreshold.value) }.values)
+      Stream.iterable(map.filter { case (_, absence) => absence.end.value.isAfter(endThreshold.value) }.values)
     )
 
-  override def delete(tripId: TripId): F[Unit] = state.update(_.removed(tripId))
+  override def delete(absenceId: AbsenceId): F[Unit] = state.update(_.removed(absenceId))

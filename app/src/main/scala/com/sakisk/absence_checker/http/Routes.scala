@@ -19,14 +19,14 @@ package com.sakisk.absence_checker.http
 import com.sakisk.absence_checker
 import smithy4s.http4s.swagger.docs
 import cats.effect.*
-import com.sakisk.absence_checker.repositories.TripRepository
+import com.sakisk.absence_checker.repositories.AbsenceRepository
 import org.http4s.HttpRoutes
 import smithy4s.http4s.SimpleRestJsonBuilder
 
-class Routes[F[_]: Async](repo: TripRepository[F]):
+class Routes[F[_]: Async](repo: AbsenceRepository[F]):
   val routes: Resource[F, HttpRoutes[F]] = SimpleRestJsonBuilder.routes(AbsenceCheckerImpl[F](repo)).resource
 
   val docRoutes: HttpRoutes[F] = docs[F](absence_checker.AbsenceCheckerService)
 
 object Routes:
-  def apply[F[_]: Async](repo: TripRepository[F]): Routes[F] = new Routes(repo)
+  def apply[F[_]: Async](repo: AbsenceRepository[F]): Routes[F] = new Routes(repo)

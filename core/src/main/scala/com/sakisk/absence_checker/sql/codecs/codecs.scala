@@ -21,11 +21,11 @@ import skunk.Codec
 import skunk.codec.all.*
 import smithy4s.Timestamp
 
-val tripId: Codec[TripId] = uuid.imap(TripId.apply)(_.value)
+val absenceId: Codec[AbsenceId] = uuid.imap(AbsenceId.apply)(_.value)
 
-val tripName: Codec[TripName] = text.imap(TripName.apply)(_.value)
+val absenceName: Codec[AbsenceName] = text.imap(AbsenceName.apply)(_.value)
 
 val smithyTimestamp: Codec[Timestamp] = timestamptz.imap(Timestamp.fromOffsetDateTime)(_.toOffsetDateTime)
 
-val tripStartTime: Codec[TripStartTime] = smithyTimestamp.imap(TripStartTime.apply)(_.value)
-val tripEndTime: Codec[TripEndTime]     = smithyTimestamp.imap(TripEndTime.apply)(_.value)
+val absenceStartTime: Codec[AbsenceStartTime] = smithyTimestamp.imap(AbsenceStartTime.apply)(_.value)
+val absenceEndTime: Codec[AbsenceEndTime]     = smithyTimestamp.imap(AbsenceEndTime.apply)(_.value)

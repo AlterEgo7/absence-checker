@@ -23,18 +23,18 @@ import smithy4s.Timestamp
 
 import java.time.Instant
 
-val tripGenerator: Gen[Trip] =
+val absenceGenerator: Gen[Absence] =
   for {
-    id              <- Gen.uuid.map(TripId.apply)
+    id              <- Gen.uuid.map(AbsenceId.apply)
     start           <- Gen.chooseNum(-2208988800000L, 1701899033399L)
     durationSeconds <- Gen.chooseNum(86400, 86400 * 30)
     startInstant     = Instant.ofEpochMilli(start)
-    startDateTime    = TripStartTime(Timestamp.fromInstant(startInstant))
+    startDateTime    = AbsenceStartTime(Timestamp.fromInstant(startInstant))
     endInstant       = startInstant.plusSeconds(durationSeconds)
-    endDateTime      = TripEndTime(Timestamp.fromInstant(endInstant))
-    name            <- Gen.alphaStr.map(TripName.apply)
+    endDateTime      = AbsenceEndTime(Timestamp.fromInstant(endInstant))
+    name            <- Gen.alphaStr.map(AbsenceName.apply)
 
-  } yield Trip(id, startDateTime, endDateTime, name)
+  } yield Absence(id, startDateTime, endDateTime, name)
 
 extension [A](gen: Gen[A])
   def generateSingle: A = gen.pureApply(Gen.Parameters.default, Seed.random())

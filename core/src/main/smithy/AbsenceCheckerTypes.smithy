@@ -8,27 +8,27 @@ use smithy4s.meta#typeclass
 structure show {}
 
 @uuidFormat
-string TripId
+string AbsenceId
 
-string TripName
+string AbsenceName
 
-timestamp TripStartTime
+timestamp AbsenceStartTime
 
-timestamp TripEndTime
+timestamp AbsenceEndTime
 
 @show
-structure Trip {
+structure Absence {
   @required
-  id: TripId
+  id: AbsenceId
 
   @required
   @timestampFormat("date-time")
-  start: TripStartTime
+  start: AbsenceStartTime
 
   @required
   @timestampFormat("date-time")
-  end: TripEndTime
+  end: AbsenceEndTime
 
   @required
-  name: TripName
+  name: AbsenceName
 }

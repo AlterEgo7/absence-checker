@@ -20,7 +20,7 @@ import cats.Applicative
 import cats.effect.kernel.Async
 import cats.syntax.all.*
 import com.sakisk.absence_checker.*
-import com.sakisk.absence_checker.repositories.TripRepository
+import com.sakisk.absence_checker.repositories.AbsenceRepository
 import com.sakisk.absence_checker.types.*
 import smithy4s.Timestamp
 
@@ -28,20 +28,20 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-class AbsenceCheckerImpl[F[_]: Applicative: Async](repo: TripRepository[F]) extends AbsenceCheckerService[F]:
+class AbsenceCheckerImpl[F[_]: Applicative: Async](repo: AbsenceRepository[F]) extends AbsenceCheckerService[F]:
 
-  override def insertTrip(trip: Trip): F[Unit] =
-    repo.upsert(trip)
+  override def insertAbsence(absence: Absence): F[Unit] =
+    repo.upsert(absence)
 
-  override def listTrips(): F[ListTripsOutput] =
-    repo.streamAll.compile.toList.map(trips => ListTripsOutput(trips.toSet))
+  override def listAbsences(): F[ListAbsencesOutput] =
+    repo.streamAll.compile.toList.map(absences => ListAbsencesOutput(absences.toSet))
 
-  override def getTrip(id: TripId): F[Trip] =
-    Trip(
-      TripId(UUID.randomUUID()),
-      TripStartTime(Timestamp.fromInstant(Instant.now.minus(5, ChronoUnit.DAYS))),
-      TripEndTime(Timestamp.nowUTC()),
-      TripName("test")
+  override def getAbsence(id: AbsenceId): F[Absence] =
+    Absence(
+      AbsenceId(UUID.randomUUID()),
+      AbsenceStartTime(Timestamp.fromInstant(Instant.now.minus(5, ChronoUnit.DAYS))),
+      AbsenceEndTime(Timestamp.nowUTC()),
+      AbsenceName("test")
     ).pure[F]
 
 end AbsenceCheckerImpl
