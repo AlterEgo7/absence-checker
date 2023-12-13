@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker
+package com.sakisk.absence_checker
 
 import cats.effect.*
 import cats.effect.std.Console
@@ -34,8 +34,8 @@ trait TestResources:
   def sessionPool[F[_]: Async: Tracer: Network: Console]: SessionPool[F] =
     val postgresContainerDef = PostgreSQLContainer.Def(
       dockerImageName = DockerImageName.parse("postgres:16-alpine"),
-      databaseName = "absense_checker",
-      username = "absense_checker",
+      databaseName = "absence_checker",
+      username = "absence_checker",
       password = "pass",
       mountPostgresDataToTmpfs = true,
       urlParams = Map("search_path" -> "public", "sslmode" -> "disable"),

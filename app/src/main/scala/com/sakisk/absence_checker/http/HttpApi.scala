@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.http
+package com.sakisk.absence_checker.http
 
 import cats.effect.kernel.Async
 

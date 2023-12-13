@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.http
+package com.sakisk.absence_checker.http
 
 import cats.Applicative
 import cats.effect.kernel.Async
 import cats.syntax.all.*
-import com.sakisk.absense_checker.*
-import com.sakisk.absense_checker.repositories.TripRepository
-import com.sakisk.absense_checker.types.*
+import com.sakisk.absence_checker.*
+import com.sakisk.absence_checker.repositories.TripRepository
+import com.sakisk.absence_checker.types.*
 import smithy4s.Timestamp
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-class AbsenseCheckerImpl[F[_]: Applicative: Async](repo: TripRepository[F]) extends AbsenseCheckerService[F]:
+class AbsenceCheckerImpl[F[_]: Applicative: Async](repo: TripRepository[F]) extends AbsenceCheckerService[F]:
 
   override def insertTrip(trip: Trip): F[Unit] =
     repo.upsert(trip)
@@ -44,4 +44,4 @@ class AbsenseCheckerImpl[F[_]: Applicative: Async](repo: TripRepository[F]) exte
       TripName("test")
     ).pure[F]
 
-end AbsenseCheckerImpl
+end AbsenceCheckerImpl

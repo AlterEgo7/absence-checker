@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.algebras
+package com.sakisk.absence_checker.sql.codecs
 
-import com.sakisk.absense_checker.types.{Trip, TripId}
-import fs2.*
+import com.sakisk.absence_checker.types.*
+import skunk.Codec
+import skunk.codec.all.*
+import smithy4s.Timestamp
 
-trait TripAlgebra[F[_]] extends TripCommands[F] with TripQueries[F]
+val tripId: Codec[TripId] = uuid.imap(TripId.apply)(_.value)
 
-trait TripCommands[F[_]] {
-  def put(trip: Trip): F[Unit]
+val tripName: Codec[TripName] = text.imap(TripName.apply)(_.value)
 
-  def delete(tripId: TripId): F[Unit]
-}
+val smithyTimestamp: Codec[Timestamp] = timestamptz.imap(Timestamp.fromOffsetDateTime)(_.toOffsetDateTime)
 
-trait TripQueries[F[_]] {
-  def getTrip(tripId: TripId): F[Option[Trip]]
-
-  def listTrips: Stream[F, Trip]
-}
+val tripStartTime: Codec[TripStartTime] = smithyTimestamp.imap(TripStartTime.apply)(_.value)
+val tripEndTime: Codec[TripEndTime]     = smithyTimestamp.imap(TripEndTime.apply)(_.value)

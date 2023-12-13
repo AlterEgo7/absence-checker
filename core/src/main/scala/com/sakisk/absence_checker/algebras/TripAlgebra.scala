@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.http
+package com.sakisk.absence_checker.algebras
 
-import com.sakisk.absense_checker
-import smithy4s.http4s.swagger.docs
-import cats.effect.*
-import com.sakisk.absense_checker.repositories.TripRepository
-import org.http4s.HttpRoutes
-import smithy4s.http4s.SimpleRestJsonBuilder
+import com.sakisk.absence_checker.types.{Trip, TripId}
+import fs2.*
 
-class Routes[F[_]: Async](repo: TripRepository[F]):
-  val routes: Resource[F, HttpRoutes[F]] = SimpleRestJsonBuilder.routes(AbsenseCheckerImpl[F](repo)).resource
+trait TripAlgebra[F[_]] extends TripCommands[F] with TripQueries[F]
 
-  val docRoutes: HttpRoutes[F] = docs[F](absense_checker.AbsenseCheckerService)
+trait TripCommands[F[_]] {
+  def put(trip: Trip): F[Unit]
 
-object Routes:
-  def apply[F[_]: Async](repo: TripRepository[F]): Routes[F] = new Routes(repo)
+  def delete(tripId: TripId): F[Unit]
+}
+
+trait TripQueries[F[_]] {
+  def getTrip(tripId: TripId): F[Option[Trip]]
+
+  def listTrips: Stream[F, Trip]
+}

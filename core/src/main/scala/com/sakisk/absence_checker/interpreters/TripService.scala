@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.interpreters
+package com.sakisk.absence_checker.interpreters
 
 import cats.MonadThrow
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import cats.syntax.all.*
-import com.sakisk.absense_checker.algebras.{TripAlgebra, TripCommands, TripQueries}
-import com.sakisk.absense_checker.repositories.TripRepository
-import com.sakisk.absense_checker.types.{Trip, TripId}
+import com.sakisk.absence_checker.algebras.{TripAlgebra, TripCommands, TripQueries}
+import com.sakisk.absence_checker.repositories.TripRepository
+import com.sakisk.absence_checker.types.{Trip, TripId}
 
 import java.time.Duration as JavaDuration
 

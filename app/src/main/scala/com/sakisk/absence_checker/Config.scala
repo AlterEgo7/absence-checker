@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker
+package com.sakisk.absence_checker
 
 import cats.syntax.all.*
 import ciris.*

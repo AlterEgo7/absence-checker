@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.repositories
+package com.sakisk.absence_checker.repositories
 
 import cats.effect.MonadCancelThrow
 import cats.effect.kernel.Resource
 import cats.syntax.all.*
-import com.sakisk.absense_checker.sql.codecs.*
-import com.sakisk.absense_checker.types.{Trip, TripEndTime, TripId}
+import com.sakisk.absence_checker.sql.codecs.*
+import com.sakisk.absence_checker.types.{Trip, TripEndTime, TripId}
 import fs2.*
 import org.typelevel.otel4s.Attribute
 import org.typelevel.otel4s.trace.Tracer
