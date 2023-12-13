@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker
+package com.sakisk.absence_checker
 
 import cats.effect.*
 import cats.syntax.all.*
-import com.sakisk.absense_checker.http.Routes
+import com.sakisk.absence_checker.http.Routes
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.middleware
 import org.http4s.syntax.all.*

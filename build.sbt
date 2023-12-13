@@ -74,13 +74,13 @@ lazy val app = project
     ),
     jibBaseImage           := "eclipse-temurin:21-jre-alpine",
     jibUseCurrentTimestamp := true,
-    jibName                := "absense-checker",
+    jibName                := "absence-checker",
     jibVersion             := "0.1",
     jibEnvironment ++= Map(
       "DB_HOST"     -> "postgres",
-      "DB_USERNAME" -> sys.env.getOrElse("DB_USERNAME", "absense_cheker"),
+      "DB_USERNAME" -> sys.env.getOrElse("DB_USERNAME", "absence_cheker"),
       "DB_PASSWORD" -> sys.env.getOrElse("DB_PASSWORD", ""),
-      "DB_NAME"     -> sys.env.getOrElse("DB_NAME", "absense_checker")
+      "DB_NAME"     -> sys.env.getOrElse("DB_NAME", "absence_checker")
     )
       ++ sys.env.get("DB_PORT").map(p => "DB_PORT" -> p)
       ++ Map("JAVA_OPTS" -> "-Dotel.java.global-autoconfigure.enabled=true -Dotel.service.name=jaeger-example -Dotel.metrics.exporter=none"),
@@ -97,9 +97,9 @@ ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
 ThisBuild / githubWorkflowUseSbtThinClient      := true
 ThisBuild / githubWorkflowEnv ++= Map(
   "ATLAS_SCHEMA_FILE" -> "${{ github.workspace }}/db/local/schema.hcl",
-  "DB_USERNAME"       -> "absense_checker",
+  "DB_USERNAME"       -> "absence_checker",
   "DB_PASSWORD"       -> "pass",
-  "DB_NAME"           -> "absense_checker",
+  "DB_NAME"           -> "absence_checker",
   "DB_PORT"           -> "5432"
 )
 ThisBuild / githubWorkflowBuildPreamble         := Seq(

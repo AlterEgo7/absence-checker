@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.repositories
+package com.sakisk.absence_checker.repositories
 
 import cats.effect.*
 import cats.syntax.all.*
-import com.sakisk.absense_checker.TestResources
-import com.sakisk.absense_checker.generators.*
-import com.sakisk.absense_checker.types.*
+import com.sakisk.absence_checker.TestResources
+import com.sakisk.absence_checker.generators.*
+import com.sakisk.absence_checker.types.*
 import org.typelevel.otel4s.trace.Tracer.Implicits.noop
 import skunk.*
 import smithy4s.Timestamp

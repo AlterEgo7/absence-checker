@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.generators
+package com.sakisk.absence_checker.generators
 
-import com.sakisk.absense_checker.types.*
+import com.sakisk.absence_checker.types.*
 import org.scalacheck.Gen
 import org.scalacheck.rng.Seed
 import smithy4s.Timestamp

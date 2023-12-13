@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.sql.codecs
+package com.sakisk.absence_checker.http
 
-import com.sakisk.absense_checker.types.*
-import skunk.Codec
-import skunk.codec.all.*
-import smithy4s.Timestamp
+import com.sakisk.absence_checker
+import smithy4s.http4s.swagger.docs
+import cats.effect.*
+import com.sakisk.absence_checker.repositories.TripRepository
+import org.http4s.HttpRoutes
+import smithy4s.http4s.SimpleRestJsonBuilder
 
-val tripId: Codec[TripId] = uuid.imap(TripId.apply)(_.value)
+class Routes[F[_]: Async](repo: TripRepository[F]):
+  val routes: Resource[F, HttpRoutes[F]] = SimpleRestJsonBuilder.routes(AbsenceCheckerImpl[F](repo)).resource
 
-val tripName: Codec[TripName] = text.imap(TripName.apply)(_.value)
+  val docRoutes: HttpRoutes[F] = docs[F](absence_checker.AbsenceCheckerService)
 
-val smithyTimestamp: Codec[Timestamp] = timestamptz.imap(Timestamp.fromOffsetDateTime)(_.toOffsetDateTime)
-
-val tripStartTime: Codec[TripStartTime] = smithyTimestamp.imap(TripStartTime.apply)(_.value)
-val tripEndTime: Codec[TripEndTime]     = smithyTimestamp.imap(TripEndTime.apply)(_.value)
+object Routes:
+  def apply[F[_]: Async](repo: TripRepository[F]): Routes[F] = new Routes(repo)

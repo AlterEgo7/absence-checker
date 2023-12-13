@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.fakes
+package com.sakisk.absence_checker.fakes
 
 import cats.Functor
 import cats.effect.Ref
 import cats.syntax.all.*
-import com.sakisk.absense_checker.repositories.TripRepository
-import com.sakisk.absense_checker.types.{Trip, TripEndTime, TripId}
+import com.sakisk.absence_checker.repositories.TripRepository
+import com.sakisk.absence_checker.types.{Trip, TripEndTime, TripId}
 import fs2.*
 
 class MockTripRepository[F[_]: Functor](state: Ref[F, Map[TripId, Trip]]) extends TripRepository[F]:

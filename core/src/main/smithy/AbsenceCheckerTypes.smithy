@@ -1,4 +1,4 @@
-namespace com.sakisk.absense_checker.types
+namespace com.sakisk.absence_checker.types
 
 use alloy#uuidFormat
 use smithy4s.meta#typeclass

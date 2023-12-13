@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker
+package com.sakisk.absence_checker
 
 import cats.effect.*
 import cats.effect.std.Console
 import cats.syntax.all.*
-import com.sakisk.absense_checker.repositories.{TripRepository, TripRepositoryPostgres}
+import com.sakisk.absence_checker.repositories.{TripRepository, TripRepositoryPostgres}
 import fs2.io.net.Network
 import org.typelevel.log4cats.Logger
 import org.typelevel.otel4s.trace.Tracer

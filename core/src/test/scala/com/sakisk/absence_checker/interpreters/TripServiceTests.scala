@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.sakisk.absense_checker.interpreters
+package com.sakisk.absence_checker.interpreters
 
 import cats.effect.{IO, Ref}
-import com.sakisk.absense_checker.fakes.MockTripRepository
-import com.sakisk.absense_checker.types.*
+import com.sakisk.absence_checker.fakes.MockTripRepository
+import com.sakisk.absence_checker.types.*
 import weaver.SimpleIOSuite
-import com.sakisk.absense_checker.generators.*
+import com.sakisk.absence_checker.generators.*
 import org.scalacheck.Gen
 import smithy4s.Timestamp
 import weaver.scalacheck.*

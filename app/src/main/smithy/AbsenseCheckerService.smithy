@@ -1,14 +1,14 @@
 metadata smithy4sErrorsAsScala3Unions = true
 
-namespace com.sakisk.absense_checker
+namespace com.sakisk.absence_checker
 
 use alloy#simpleRestJson
-use com.sakisk.absense_checker.types#TripId
+use com.sakisk.absence_checker.types#TripId
 use smithy4s.meta#packedInputs
-use com.sakisk.absense_checker.types#Trip
+use com.sakisk.absence_checker.types#Trip
 
 @simpleRestJson
-service AbsenseCheckerService {
+service AbsenceCheckerService {
   version: "0.1.0"
   operations: [InsertTrip, ListTrips, GetTrip]
 }
