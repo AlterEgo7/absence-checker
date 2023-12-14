@@ -19,7 +19,7 @@ ThisBuild / tlCiScalafmtCheck := true
 
 ThisBuild / Test / fork := true
 
-lazy val root = project.in(file(".")).aggregate(core, app)
+lazy val root = project.in(file(".")).aggregate(core, http4sExtras, app)
   .settings(
     jibDockerBuild / aggregate := false,
     jibImageBuild / aggregate  := false
@@ -45,6 +45,19 @@ lazy val core = project
     )
   )
   .enablePlugins(Smithy4sCodegenPlugin)
+
+lazy val http4sExtras = project
+  .in(file("http4s-extras"))
+  .settings(
+    name        := "http4s-extras",
+    description := "Extensions and helpers for http4s",
+    libraryDependencies ++= Seq(
+      Http4sCore,
+      Otel4s,
+      Weaver,
+      WeaverScalacheck
+    )
+  )
 
 lazy val app = project
   .in(file("app"))
@@ -72,6 +85,7 @@ lazy val app = project
       "-Dotel.service.name=jaeger-example",
       "-Dotel.metrics.exporter=none"
     ),
+    reStart / javaOptions ++= (run / javaOptions).value,
     jibBaseImage           := "eclipse-temurin:21-jre-alpine",
     jibUseCurrentTimestamp := true,
     jibName                := "absence-checker",
@@ -89,7 +103,7 @@ lazy val app = project
   .enablePlugins(Smithy4sCodegenPlugin)
   .enablePlugins(AtlasPlugin)
   .enablePlugins(JibPlugin)
-  .dependsOn(core)
+  .dependsOn(core, http4sExtras)
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")

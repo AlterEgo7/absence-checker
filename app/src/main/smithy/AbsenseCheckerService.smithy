@@ -10,7 +10,7 @@ use smithy4s.meta#packedInputs
 @simpleRestJson
 service AbsenceCheckerService {
   version: "0.1.0"
-  operations: [InsertAbsence, ListAbsences, GetAbsence]
+  operations: [InsertAbsence, ListAbsences, GetAbsence, DeleteAbsence]
 }
 
 @http(method: "PUT", uri: "/absences", code: 201)
@@ -36,9 +36,8 @@ operation GetAbsence {
 
 @http(method: "DELETE", uri: "/absences/{id}", code: 204)
 @idempotent
-operation DeleteAbsences {
+operation DeleteAbsence {
   input: AbsenceIdFilter
-  errors: [AbsenceNotFound]
 }
 
 structure AbsenceIdFilter {
