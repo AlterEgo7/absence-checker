@@ -17,6 +17,7 @@ object Dependencies {
   private val testContainersScalaVersion = "0.41.0"
 
   val Fs2          = "co.fs2"        %% "fs2-core"            % fs2Version
+  val Http4sCore   = "org.http4s"    %% "http4s-core"         % http4sVersion
   val Http4sServer = "org.http4s"    %% "http4s-ember-server" % http4sVersion
   val Http4sDsl    = "org.http4s"    %% "http4s-dsl"          % http4sVersion
   val Logback      = "ch.qos.logback" % "logback-classic"     % logbackVersion
@@ -41,10 +42,11 @@ object Dependencies {
   val Iron        = "io.github.iltotore" %% "iron"         % ironVersion
   val IronCiris   = "io.github.iltotore" %% "iron-ciris"   % ironVersion
 
-  val Skunk                      = "org.tpolecat"    %% "skunk-core"                                % skunkVersion
-  val Otel4s                     = "org.typelevel"   %% "otel4s-java"                               % otel4sVersion
-  val OpenTelemetryExporter      = "io.opentelemetry" % "opentelemetry-exporter-otlp"               % "1.32.0" % Runtime
-  val OpenTelemetryAutoconfigure = "io.opentelemetry" % "opentelemetry-sdk-extension-autoconfigure" % "1.32.0" % Runtime
+  val Skunk                      = "org.tpolecat"    %% "skunk-core"                  % skunkVersion
+  val Otel4s                     = "org.typelevel"   %% "otel4s-java"                 % otel4sVersion
+  val OpenTelemetryExporter      = "io.opentelemetry" % "opentelemetry-exporter-otlp" % openTelemetryVersion % Runtime
+  val OpenTelemetryAutoconfigure =
+    "io.opentelemetry" % "opentelemetry-sdk-extension-autoconfigure" % openTelemetryVersion % Runtime
 
   val Log4Cats = "org.typelevel" %% "log4cats-slf4j" % log4catsVersion
 }

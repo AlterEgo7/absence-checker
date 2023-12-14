@@ -20,6 +20,7 @@ import cats.effect.*
 import cats.syntax.all.*
 import com.sakisk.absence_checker.http.Routes
 import org.http4s.ember.server.EmberServerBuilder
+import org.http4s.middleware.ServerTracing
 import org.http4s.server.middleware
 import org.http4s.syntax.all.*
 import org.typelevel.log4cats.Logger
@@ -36,7 +37,7 @@ object Main extends ResourceApp.Forever:
       config           <- Resource.eval(Tracer[IO].span("Config read").surround(config[IO].load))
       appResources     <- Tracer[IO].span("startup").resource.flatMap(res => AppResources.make[IO](config).mapK(res.trace))
       routes            = Routes[IO](appResources.absenceRepository)
-      appRoutes        <- routes.routes.map(r => middleware.Logger.httpRoutes(true, true)(r))
+      appRoutes        <- routes.routes.map(r => ServerTracing.httpRoutes(middleware.Logger.httpRoutes(true, true)(r)))
       _                <- EmberServerBuilder.default[IO]
                             .withPort(config.httpServerConfig.port)
                             .withHost(config.httpServerConfig.host)

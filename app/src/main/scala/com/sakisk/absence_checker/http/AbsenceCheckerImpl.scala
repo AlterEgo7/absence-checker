@@ -16,19 +16,14 @@
 
 package com.sakisk.absence_checker.http
 
-import cats.Applicative
+import cats.effect.MonadCancelThrow
 import cats.effect.kernel.Async
 import cats.syntax.all.*
 import com.sakisk.absence_checker.*
 import com.sakisk.absence_checker.repositories.AbsenceRepository
 import com.sakisk.absence_checker.types.*
-import smithy4s.Timestamp
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.UUID
-
-class AbsenceCheckerImpl[F[_]: Applicative: Async](repo: AbsenceRepository[F]) extends AbsenceCheckerService[F]:
+class AbsenceCheckerImpl[F[_]: Async](repo: AbsenceRepository[F]) extends AbsenceCheckerService[F]:
 
   override def insertAbsence(absence: Absence): F[Unit] =
     repo.upsert(absence)
@@ -37,11 +32,11 @@ class AbsenceCheckerImpl[F[_]: Applicative: Async](repo: AbsenceRepository[F]) e
     repo.streamAll.compile.toList.map(absences => ListAbsencesOutput(absences.toSet))
 
   override def getAbsence(id: AbsenceId): F[Absence] =
-    Absence(
-      AbsenceId(UUID.randomUUID()),
-      AbsenceStartTime(Timestamp.fromInstant(Instant.now.minus(5, ChronoUnit.DAYS))),
-      AbsenceEndTime(Timestamp.nowUTC()),
-      AbsenceName("test")
-    ).pure[F]
+    repo.find(id).flatMap:
+      case None          => MonadCancelThrow[F].raiseError(AbsenceNotFound())
+      case Some(absence) => absence.pure[F]
+
+  override def deleteAbsence(id: AbsenceId): F[Unit] =
+    repo.delete(id)
 
 end AbsenceCheckerImpl
