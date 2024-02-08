@@ -107,7 +107,7 @@ lazy val app = project
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowOSes                  := Seq("ubuntu-latest")
-ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("17"))
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.graalvm("21"))
 ThisBuild / githubWorkflowUseSbtThinClient      := true
 ThisBuild / githubWorkflowEnv ++= Map(
   "ATLAS_SCHEMA_FILE" -> "${{ github.workspace }}/db/local/schema.hcl",
