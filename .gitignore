@@ -33,3 +33,5 @@ metals.sbt
 
 .envrc
 http-requests/
+.smithy.lsp.log
+build/

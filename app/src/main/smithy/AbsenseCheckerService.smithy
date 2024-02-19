@@ -1,3 +1,5 @@
+$version: "2"
+
 metadata smithy4sErrorsAsScala3Unions = true
 
 namespace com.sakisk.absence_checker
@@ -22,12 +24,14 @@ operation InsertAbsence {
 }
 
 @http(method: "GET", uri: "/absences", code: 200)
+@readonly
 operation ListAbsences {
   output: ListAbsencesOutput
 }
 
 
 @http(method: "GET", uri: "/absences/{id}", code: 200)
+@readonly
 operation GetAbsence {
   input: AbsenceIdFilter
   output: Absence
@@ -46,7 +50,8 @@ structure AbsenceIdFilter {
   id: AbsenceId
 }
 
-set AbsenceSet {
+@uniqueItems
+list AbsenceSet {
   member: Absence
 }
 
