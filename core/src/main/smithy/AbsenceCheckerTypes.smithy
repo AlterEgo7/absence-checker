@@ -1,3 +1,5 @@
+$version: "2"
+
 namespace com.sakisk.absence_checker.types
 
 use alloy#uuidFormat
