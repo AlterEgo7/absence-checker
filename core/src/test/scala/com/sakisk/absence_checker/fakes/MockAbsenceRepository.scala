@@ -41,4 +41,9 @@ class MockAbsenceRepository[F[_]: Functor](state: Ref[F, Map[AbsenceId, Absence]
       Stream.iterable(map.filter { case (_, absence) => absence.end.value.isAfter(endThreshold.value) }.values)
     )
 
+  override def isDateRangeEmpty(start: AbsenceStartTime, end: AbsenceEndTime): F[Boolean] =
+    state.get.map:
+      _.forall:
+        case (_, absence) => start.value.isAfter(end.value) || absence.start.value.isAfter(end.value)
+
   override def delete(absenceId: AbsenceId): F[Unit] = state.update(_.removed(absenceId))

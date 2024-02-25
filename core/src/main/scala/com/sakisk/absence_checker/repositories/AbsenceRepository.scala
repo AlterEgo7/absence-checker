@@ -34,6 +34,8 @@ trait AbsenceRepository[F[_]] {
 
   def find(absenceId: AbsenceId): F[Option[Absence]]
 
+  def isDateRangeEmpty(start: AbsenceStartTime, end: AbsenceEndTime): F[Boolean]
+
   def streamAll: Stream[F, Absence]
 
   def streamWithEndAfter(endThreshold: AbsenceEndTime): Stream[F, Absence]
@@ -75,6 +77,15 @@ object AbsenceRepositoryPostgres:
         Tracer[F].span("Delete Absence", Attribute("id", absenceId.value.toString)).surround:
           postgres.use(_.execute(deleteSql)(absenceId)).void
 
+      override def isDateRangeEmpty(start: AbsenceStartTime, end: AbsenceEndTime): F[Boolean] =
+        Tracer[F].span(
+          "Is Date Range Empty",
+          Attribute[String](
+            "Absence start time",
+            start.value.toOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+          ),
+          Attribute[String]("Absence end time", end.value.toOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+        ).surround(postgres.use(_.option(selectInDateRange)((start, end)).map(_.isEmpty)))
     end new
 
   private object AbsenceRepositorySql:
@@ -110,6 +121,13 @@ object AbsenceRepositoryPostgres:
            DELETE FROM absences
            WHERE id = $absenceId
          """.command
+
+    val selectInDateRange: Query[(AbsenceStartTime, AbsenceEndTime), Absence] =
+      sql"""
+            SELECT * FROM absences
+            WHERE $absenceStartTime <= "end"
+            AND $absenceEndTime >= start
+         """.query(codec).to[Absence]
 
   end AbsenceRepositorySql
 
