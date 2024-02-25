@@ -28,7 +28,11 @@ import java.time.Duration as JavaDuration
 class AbsenceCommandHandler[F[_]: MonadThrow](repo: AbsenceRepository[F]) extends AbsenceCommands[F]:
   override def put(absence: Absence): F[Unit] =
     validateAbsence(absence) match
-      case Validated.Valid(absence)  => repo.upsert(absence)
+      case Validated.Valid(absence)  =>
+        repo.isDateRangeEmpty(absence.start, absence.end).ifM(
+          repo.upsert(absence),
+          AbsenceValidationError(NonEmptyList.one("Another absence is persisted in the same date range.")).raiseError
+        )
       case Validated.Invalid(errors) => AbsenceValidationError(errors).raiseError
 
   override def delete(absenceId: AbsenceId): F[Unit] =

@@ -20,7 +20,7 @@ import cats.effect.*
 import cats.syntax.all.*
 import com.sakisk.absence_checker.TestResources
 import com.sakisk.absence_checker.generators.*
-import com.sakisk.absence_checker.types.*
+import com.sakisk.absence_checker.types.{AbsenceStartTime, *}
 import org.typelevel.otel4s.trace.Tracer.Implicits.noop
 import skunk.*
 import smithy4s.Timestamp
@@ -123,5 +123,32 @@ object AbsenceRepositoryPostgresTests extends IOSuite with TestResources:
       _            <- repo.delete(absence.id)
       maybeAbsence <- repo.find(absence.id)
     } yield expect(maybeAbsence.isEmpty)
+
+  test("tells if absences exist in a given timestamp range"): postgres =>
+    val absence1 = Absence(
+      id = AbsenceId(UUID.randomUUID()),
+      name = AbsenceName("absence1"),
+      start = AbsenceStartTime(Timestamp.fromInstant(Instant.now)),
+      end = AbsenceEndTime(Timestamp.fromInstant(Instant.now.plus(2, ChronoUnit.DAYS)))
+    )
+
+    val absence2 = Absence(
+      id = AbsenceId(UUID.randomUUID()),
+      name = AbsenceName("absence2"),
+      start = AbsenceStartTime(Timestamp.fromInstant(Instant.now.minus(3, ChronoUnit.DAYS))),
+      end = AbsenceEndTime(Timestamp.fromInstant(Instant.now.minus(2, ChronoUnit.DAYS)))
+    )
+
+    val range = (
+      AbsenceStartTime(Timestamp.fromInstant(Instant.now.minus(1, ChronoUnit.DAYS))),
+      AbsenceEndTime(Timestamp.fromInstant(Instant.now.plus(1, ChronoUnit.DAYS)))
+    )
+
+    val repo = AbsenceRepositoryPostgres(postgres)
+
+    for {
+      _       <- List(absence1, absence2).traverse(repo.upsert)
+      isEmpty <- repo.isDateRangeEmpty(range._1, range._2)
+    } yield expect(!isEmpty)
 
 end AbsenceRepositoryPostgresTests

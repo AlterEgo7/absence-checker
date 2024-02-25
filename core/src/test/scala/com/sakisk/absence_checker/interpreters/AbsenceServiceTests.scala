@@ -26,6 +26,7 @@ import smithy4s.Timestamp
 import weaver.scalacheck.*
 import fs2.*
 
+import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import scala.util.Random
@@ -70,6 +71,33 @@ object AbsenceServiceTests extends SimpleIOSuite with Checkers:
       _        <- service.put(absence)
     } yield failure("Should fail with validation failure")).handleError(t =>
       expect.all(t.isInstanceOf[AbsenceValidationError], t.getMessage.contains("start datetime is after end datetime"))
+    )
+
+  test("fails with a validation error when the absence range is occupied already"):
+    val existingAbsence = Absence(
+      AbsenceId(UUID.randomUUID()),
+      AbsenceStartTime(Timestamp.nowUTC()),
+      AbsenceEndTime(Timestamp.fromInstant(Instant.now.plusSeconds(86400))),
+      AbsenceName("Existing")
+    )
+
+    val newAbsence = Absence(
+      AbsenceId(UUID.randomUUID()),
+      AbsenceStartTime(Timestamp.fromInstant(Instant.now.plusSeconds(50000))),
+      AbsenceEndTime(Timestamp.fromInstant(Instant.now.plusSeconds(1000000))),
+      AbsenceName("Existing")
+    )
+
+    (for {
+      state  <- Ref.of(Map(existingAbsence.id -> existingAbsence))
+      repo    = MockAbsenceRepository[IO](state)
+      service = AbsenceCommandHandler(repo)
+      _      <- service.put(newAbsence)
+    } yield failure("Should fail with validation failure")).handleError(t =>
+      expect.all(
+        t.isInstanceOf[AbsenceValidationError],
+        t.getMessage.contains("Another absence is persisted in the same date range.")
+      )
     )
 
   test("getAbsence returns an existing absence"):
