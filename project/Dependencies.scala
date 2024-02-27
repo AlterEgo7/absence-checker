@@ -1,20 +1,20 @@
 import sbt.*
 
 object Dependencies {
-  private val http4sVersion              = "0.23.24"
+  private val http4sVersion              = "0.23.25"
   private val fs2Version                 = "3.9.3"
-  private val weaverVersion              = "0.8.3"
+  private val weaverVersion              = "0.8.4"
   private val smithy4sVersion            = "0.18.8"
   private val smithyModelVersion         = "1.45.0"
-  private val alloyVersion               = "0.2.8"
-  private val logbackVersion             = "1.4.14"
+  private val alloyVersion               = "0.3.0"
+  private val logbackVersion             = "1.5.0"
   private val cirisVersion               = "3.5.0"
-  private val ironVersion                = "2.3.0"
-  private val skunkVersion               = "1.1.0-M2"
-  private val otel4sVersion              = "0.3.0"
+  private val ironVersion                = "2.4.0"
+  private val skunkVersion               = "1.1.0-M3"
+  private val otel4sVersion              = "0.4.0"
   private val log4catsVersion            = "2.6.0"
-  private val openTelemetryVersion       = "1.33.0"
-  private val testContainersScalaVersion = "0.41.0"
+  private val openTelemetryVersion       = "1.35.0"
+  private val testContainersScalaVersion = "0.41.3"
 
   val Fs2          = "co.fs2"        %% "fs2-core"            % fs2Version
   val Http4sCore   = "org.http4s"    %% "http4s-core"         % http4sVersion
