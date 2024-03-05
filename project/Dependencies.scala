@@ -1,15 +1,15 @@
 import sbt.*
 
 object Dependencies {
-  private val http4sVersion              = "0.23.25"
+  private val http4sVersion              = "0.23.26"
   private val fs2Version                 = "3.9.3"
   private val weaverVersion              = "0.8.4"
-  private val smithy4sVersion            = "0.18.8"
+  private val smithy4sVersion            = "0.18.10"
   private val smithyModelVersion         = "1.45.0"
-  private val alloyVersion               = "0.3.0"
-  private val logbackVersion             = "1.5.0"
+  private val alloyVersion               = "0.3.2"
+  private val logbackVersion             = "1.5.3"
   private val cirisVersion               = "3.5.0"
-  private val ironVersion                = "2.4.0"
+  private val ironVersion                = "2.5.0"
   private val skunkVersion               = "1.1.0-M3"
   private val otel4sVersion              = "0.4.0"
   private val log4catsVersion            = "2.6.0"
