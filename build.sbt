@@ -8,7 +8,7 @@ ThisBuild / organizationName := "Sakis Karagiannis"
 ThisBuild / startYear        := Some(2023)
 ThisBuild / licenses         := Seq(License.Apache2)
 
-val Scala3 = "3.3.1"
+val Scala3 = "3.4.0"
 
 ThisBuild / scalaVersion := Scala3
 
