@@ -34,7 +34,7 @@ object Main extends ResourceApp.Forever:
       tracerBuilder    <- Resource.eval(OtelJava.global[IO].map(_.tracerProvider.tracer("Absense Checker")))
       given Tracer[IO] <- Resource.eval(tracerBuilder.get)
       given Logger[IO] <- Resource.eval(Slf4jLogger.create[IO])
-      config           <- Resource.eval(Tracer[IO].span("Config read").surround(config[IO].load))
+      config           <- Resource.eval(Tracer[IO].span("Config read").surround(appConfig[IO].load))
       appResources     <- Tracer[IO].span("startup").resource.flatMap(res => AppResources.make[IO](config).mapK(res.trace))
       routes            = Routes[IO](appResources.absenceRepository)
       appRoutes        <- routes.routes.map(r => ServerTracing.httpRoutes(middleware.Logger.httpRoutes(true, true)(r)))

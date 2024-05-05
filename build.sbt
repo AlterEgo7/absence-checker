@@ -31,6 +31,10 @@ lazy val core = project
     name        := "core",
     description := "Core data types and operations",
     libraryDependencies ++= Seq(
+      Ciris,
+      Iron,
+      IronCats,
+      IronCiris,
       Logback,
       Smithy4sCore,
       SmithyModel,
