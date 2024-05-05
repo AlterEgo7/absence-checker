@@ -1,5 +1,5 @@
-addSbtPlugin("org.typelevel"                % "sbt-typelevel"        % "0.6.2")
+addSbtPlugin("org.typelevel"                % "sbt-typelevel"        % "0.7.0")
 addSbtPlugin("org.scalameta"                % "sbt-scalafmt"         % "2.5.2")
 addSbtPlugin("com.disneystreaming.smithy4s" % "smithy4s-sbt-codegen" % "0.18.16")
-addSbtPlugin("de.gccc.sbt"                  % "sbt-jib"              % "1.3.6")
+addSbtPlugin("de.gccc.sbt"                  % "sbt-jib"              % "1.3.7")
 addSbtPlugin("io.spray"                     % "sbt-revolver"         % "0.10.0")
