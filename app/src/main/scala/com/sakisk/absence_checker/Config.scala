@@ -20,24 +20,11 @@ import cats.syntax.all.*
 import ciris.*
 import ciris.http4s.*
 import com.comcast.ip4s.*
+import com.sakisk.absence_checker.config.*
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
 import io.github.iltotore.iron.ciris.given
-
-import scala.annotation.targetName
-
-opaque type DatabaseUsername = String :| MinLength[1]
-
-extension (username: DatabaseUsername)
-  @targetName("database_username_value") def value: String = username
-
-opaque type DatabasePassword = String
-extension (password: DatabasePassword)
-  @targetName("database_password_value") def value: String = password
-
-opaque type DatabaseName = String
-extension (dbName: DatabaseName)
-  @targetName("database_name_value") def value: String = dbName
+import io.github.iltotore.iron.cats.given
 
 final case class Config(httpServerConfig: HttpServerConfig, databaseConfig: DatabaseConfig)
 final case class HttpServerConfig(host: Host, port: Port)
@@ -67,7 +54,7 @@ def databaseConfig[F[_]]: ConfigValue[F, DatabaseConfig] =
   )
     .parMapN(DatabaseConfig.apply)
 
-def config[F[_]]: ConfigValue[F, Config] =
+def appConfig[F[_]]: ConfigValue[F, Config] =
   (
     httpServerConfig[F],
     databaseConfig[F]

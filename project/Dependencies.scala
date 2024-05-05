@@ -41,6 +41,7 @@ object Dependencies {
   val CirisHttp4s = "is.cir"             %% "ciris-http4s" % cirisVersion
   val Iron        = "io.github.iltotore" %% "iron"         % ironVersion
   val IronCiris   = "io.github.iltotore" %% "iron-ciris"   % ironVersion
+  val IronCats    = "io.github.iltotore" %% "iron-cats"    % ironVersion
 
   val Skunk                      = "org.tpolecat"    %% "skunk-core"                  % skunkVersion
   val Otel4s                     = "org.typelevel"   %% "otel4s-java"                 % otel4sVersion
