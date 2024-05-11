@@ -21,7 +21,6 @@ import cats.effect.Ref
 import cats.syntax.all.*
 import com.sakisk.absence_checker.repositories.AbsenceRepository
 import com.sakisk.absence_checker.types.*
-import fs2.*
 
 class MockAbsenceRepository[F[_]: Functor](state: Ref[F, Map[AbsenceId, Absence]]) extends AbsenceRepository[F]:
 
@@ -33,13 +32,11 @@ class MockAbsenceRepository[F[_]: Functor](state: Ref[F, Map[AbsenceId, Absence]
   override def find(absenceId: AbsenceId): F[Option[Absence]] =
     state.get.map(state => state.get(absenceId))
 
-  override def streamAll: fs2.Stream[F, Absence] =
-    Stream.eval(state.get).flatMap(map => Stream.iterable(map.values))
+  override def listAll: F[List[Absence]] =
+    state.get.map(_.values.toList)
 
-  override def streamWithEndAfter(endThreshold: AbsenceEndTime): fs2.Stream[F, Absence] =
-    Stream.eval(state.get).flatMap(map =>
-      Stream.iterable(map.filter { case (_, absence) => absence.end.value.isAfter(endThreshold.value) }.values)
-    )
+  override def listWithEndAfter(endThreshold: AbsenceEndTime): F[List[Absence]] =
+    state.get.map(_.filter { case (_, absence) => absence.end.value.isAfter(endThreshold.value) }.values.toList)
 
   override def isDateRangeEmpty(start: AbsenceStartTime, end: AbsenceEndTime): F[Boolean] =
     state.get.map:

@@ -29,7 +29,7 @@ class AbsenceCheckerImpl[F[_]: Async](repo: AbsenceRepository[F]) extends Absenc
     repo.upsert(absence)
 
   override def listAbsences(): F[ListAbsencesOutput] =
-    repo.streamAll.compile.toList.map(absences => ListAbsencesOutput(absences.toSet))
+    repo.listAll.map(absences => ListAbsencesOutput(absences.toSet))
 
   override def getAbsence(id: AbsenceId): F[Absence] =
     repo.find(id).flatMap:

@@ -65,8 +65,8 @@ class AbsenceQueryExecutor[F[_]](repo: AbsenceRepository[F]) extends AbsenceQuer
   override def getAbsence(absenceId: AbsenceId): F[Option[Absence]] =
     repo.find(absenceId)
 
-  override def listAbsences: fs2.Stream[F, Absence] =
-    repo.streamAll
+  override def listAbsences: F[List[Absence]] =
+    repo.listAll
 
 end AbsenceQueryExecutor
 
@@ -75,7 +75,7 @@ class AbsenceService[F[_]: MonadThrow](repo: AbsenceRepository[F]) extends Absen
   private val commandHandler = AbsenceCommandHandler[F](repo)
 
   override def getAbsence(absenceId: AbsenceId): F[Option[Absence]] = queryExecutor.getAbsence(absenceId)
-  override def listAbsences: fs2.Stream[F, Absence]                 = queryExecutor.listAbsences
+  override def listAbsences: F[List[Absence]]                       = queryExecutor.listAbsences
   override def put(absence: Absence): F[Unit]                       = commandHandler.put(absence)
   override def delete(absenceId: AbsenceId): F[Unit]                = commandHandler.delete(absenceId)
 end AbsenceService

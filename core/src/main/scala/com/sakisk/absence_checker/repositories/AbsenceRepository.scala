@@ -21,7 +21,6 @@ import cats.effect.kernel.Resource
 import cats.syntax.all.*
 import com.sakisk.absence_checker.sql.codecs.*
 import com.sakisk.absence_checker.types.*
-import fs2.*
 import org.typelevel.otel4s.Attribute
 import org.typelevel.otel4s.trace.Tracer
 import skunk.*
@@ -36,9 +35,9 @@ trait AbsenceRepository[F[_]] {
 
   def isDateRangeEmpty(start: AbsenceStartTime, end: AbsenceEndTime): F[Boolean]
 
-  def streamAll: Stream[F, Absence]
+  def listAll: F[List[Absence]]
 
-  def streamWithEndAfter(endThreshold: AbsenceEndTime): Stream[F, Absence]
+  def listWithEndAfter(endThreshold: AbsenceEndTime): F[List[Absence]]
 
   def delete(absenceId: AbsenceId): F[Unit]
 }
@@ -56,22 +55,19 @@ object AbsenceRepositoryPostgres:
         Tracer[F].span("Find Absence").surround:
           postgres.use(_.option(findSql)(absenceId))
 
-      override def streamAll: Stream[F, Absence] =
-        Stream.resource(Tracer[F].span("Select all Absences").resource).flatMap: res =>
-          Stream.resource(postgres).translate(res.trace).flatMap: session =>
-            session.stream(selectAllSql)(Void, 1024)
-              .translate(res.trace)
+      override def listAll: F[List[Absence]] =
+        Tracer[F].span("Select all Absences").surround:
+          postgres.use(_.execute(selectAllSql))
 
-      override def streamWithEndAfter(endThreshold: AbsenceEndTime): Stream[F, Absence] =
-        Stream.resource(Tracer[F].span(
+      override def listWithEndAfter(endThreshold: AbsenceEndTime): F[List[Absence]] =
+        Tracer[F].span(
           "Select all Absences after",
           Attribute[String](
             "Absence end time",
             endThreshold.value.toOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
           )
-        ).resource).flatMap: _ =>
-          Stream.resource(postgres).flatMap: session =>
-            session.stream(selectWithEndAfter)(endThreshold, 1024)
+        ).surround:
+          postgres.use(_.execute(selectWithEndAfter)(endThreshold))
 
       override def delete(absenceId: AbsenceId): F[Unit] =
         Tracer[F].span("Delete Absence", Attribute("id", absenceId.value.toString)).surround:
