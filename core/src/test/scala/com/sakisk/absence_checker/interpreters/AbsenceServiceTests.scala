@@ -24,7 +24,6 @@ import com.sakisk.absence_checker.generators.*
 import org.scalacheck.Gen
 import smithy4s.Timestamp
 import weaver.scalacheck.*
-import fs2.*
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -118,11 +117,10 @@ object AbsenceServiceTests extends SimpleIOSuite with Checkers:
 
   test("listAbsences returns all absences"):
     forall(Gen.listOfN(10, absenceGenerator)): absences =>
-      Stream.eval(Ref.of(Map.from(absences.map(a => a.id -> a)))).flatMap: state =>
+      Ref.of(Map.from(absences.map(a => a.id -> a))).flatMap: state =>
         val service = AbsenceQueryExecutor(MockAbsenceRepository(state))
         service.listAbsences
-      .compile.toList
-        .map(fetchedAbsences => expect(fetchedAbsences.toSet == absences.toSet))
+          .map(fetchedAbsences => expect(fetchedAbsences.toSet == absences.toSet))
 
   test("deletes an existing absence"):
     forall(Gen.listOfN(10, absenceGenerator)): absences =>

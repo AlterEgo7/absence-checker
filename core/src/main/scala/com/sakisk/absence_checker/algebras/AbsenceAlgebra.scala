@@ -17,7 +17,6 @@
 package com.sakisk.absence_checker.algebras
 
 import com.sakisk.absence_checker.types.*
-import fs2.*
 
 trait AbsenceAlgebra[F[_]] extends AbsenceCommands[F] with AbsenceQueries[F]
 
@@ -30,5 +29,5 @@ trait AbsenceCommands[F[_]] {
 trait AbsenceQueries[F[_]] {
   def getAbsence(absenceId: AbsenceId): F[Option[Absence]]
 
-  def listAbsences: Stream[F, Absence]
+  def listAbsences: F[List[Absence]]
 }

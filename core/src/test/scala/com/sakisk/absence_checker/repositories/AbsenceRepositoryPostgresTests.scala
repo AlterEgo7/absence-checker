@@ -83,7 +83,7 @@ object AbsenceRepositoryPostgresTests extends IOSuite with TestResources:
     val repo     = AbsenceRepositoryPostgres(postgres)
     for {
       _   <- absences.traverse(repo.upsert)
-      all <- repo.streamAll.compile.toList
+      all <- repo.listAll
     } yield expect(absences.toSet.subsetOf(all.toSet))
 
   test("streamWithEndAfter correctly applies the filter"): postgres =>
@@ -106,9 +106,9 @@ object AbsenceRepositoryPostgresTests extends IOSuite with TestResources:
     for {
       _        <- List(absence1, absence2).traverse(repo.upsert)
       threshold = Timestamp.fromInstant(Instant.now.minus(4, ChronoUnit.DAYS))
-      after    <- repo.streamWithEndAfter(
+      after    <- repo.listWithEndAfter(
                     AbsenceEndTime(threshold)
-                  ).compile.toList
+                  )
     } yield expect.all(
       after.map(_.id).contains(absence2.id),
       after.forall(_.end.value.isAfter(threshold))
